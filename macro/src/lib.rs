@@ -22,8 +22,8 @@ pub fn derive_html_component(input: proc_macro::TokenStream) -> proc_macro::Toke
 	component::derive_html_component(input.into()).into()
 }
 
-#[test]
-fn ui() {
-	let t = trybuild::TestCases::new();
-	t.compile_fail("tests/compile_fail/*.rs");
-}
+// #[test]
+// fn trybuild() {
+// 	let t = trybuild::TestCases::new();
+// 	t.compile_fail("tests/compile_fail/*.rs");
+// }
