@@ -1,4 +1,3 @@
-use bytes::BytesMut;
 use rstml_component::{write_html, HtmlAttributeValue, HtmlComponent, HtmlContent, HtmlFormatter};
 
 #[derive(HtmlComponent)]
@@ -87,6 +86,7 @@ where
 	}
 }
 
+#[test]
 fn test_output() {
 	let page = Page {
 		title: "Hello",
