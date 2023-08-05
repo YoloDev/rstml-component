@@ -1,0 +1,29 @@
+mod component;
+mod template;
+mod write;
+
+#[proc_macro]
+pub fn html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+	write::html(input.into(), false).into()
+}
+
+#[proc_macro]
+pub fn move_html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+	write::html(input.into(), true).into()
+}
+
+#[proc_macro]
+pub fn write_html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+	write::write_html(input.into()).into()
+}
+
+#[proc_macro_derive(HtmlComponent, attributes(html))]
+pub fn derive_html_component(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+	component::derive_html_component(input.into()).into()
+}
+
+#[test]
+fn ui() {
+	let t = trybuild::TestCases::new();
+	t.compile_fail("tests/compile_fail/*.rs");
+}
