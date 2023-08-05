@@ -26,3 +26,17 @@ fn for_iter() {
 		</ul>
 	);
 }
+
+#[test]
+fn playground() {
+	let mut buffer = BytesMut::new();
+	let mut formatter = HtmlFormatter::new(&mut buffer);
+
+	let f_ref = &mut formatter;
+	write_stuffs(f_ref).unwrap();
+	write_stuffs(formatter).unwrap();
+}
+
+fn write_stuffs<'a>(mut f: impl AsMut<HtmlFormatter<'a>>) -> std::fmt::Result {
+	f.as_mut().write_content("foo")
+}

@@ -51,6 +51,12 @@ pub struct HtmlFormatter<'a> {
 	buffer: &'a mut BytesMut,
 }
 
+impl<'a> AsMut<HtmlFormatter<'a>> for HtmlFormatter<'a> {
+	fn as_mut(&mut self) -> &mut HtmlFormatter<'a> {
+		self
+	}
+}
+
 impl<'a> HtmlFormatter<'a> {
 	pub fn new(buffer: &'a mut BytesMut) -> Self {
 		Self { buffer }
