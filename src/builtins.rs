@@ -1,7 +1,11 @@
 use crate::{HtmlComponent, HtmlContent, HtmlFormatter};
 use std::fmt;
 
-pub struct For<I, F> {
+pub struct For<I, F>
+where
+	I: IntoIterator,
+	F: FnMut(&mut HtmlFormatter, <I as IntoIterator>::Item) -> fmt::Result,
+{
 	pub items: I,
 	pub children: F,
 }
