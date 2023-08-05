@@ -36,8 +36,8 @@ impl ToTokens for WriteHtmlExpr {
 		let template = template.with_formatter(&formatter);
 
 		tokens.extend(quote!({
-			use ::rstml_component::HtmlFormatter;
-			#writer.write_content(
+			let #formatter: &mut ::rstml_component::HtmlFormatter = #writer.as_mut();
+			#formatter.write_content(
 				|#formatter: &mut ::rstml_component::HtmlFormatter| -> ::std::fmt::Result {
 					#template
 					Ok(())
