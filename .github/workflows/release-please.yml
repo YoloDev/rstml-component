@@ -1,0 +1,61 @@
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release_please:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+      statuses: write
+
+    steps:
+      - uses: GoogleCloudPlatform/release-please-action@v3
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          command: manifest
+
+      - run: |
+          echo "paths_released: ${{ steps.release.outputs.paths_released }}"
+          echo "release_created: ${{ steps.release.outputs.paths_released != '[]' }}"
+
+      # - if: ${{ steps.release.outputs.release_created }}
+      #   uses: actions/checkout@v3
+      #   with:
+      #     fetch-depth: 0
+
+      # - if: ${{ steps.release.outputs.release_created }}
+      #   uses: ./.github/workflows/upload-binaries.yml
+      #   with:
+      #     release: ${{ steps.release.outputs.tag_name }}
+    outputs:
+      release_created: ${{ steps.release.outputs.paths_released != '[]' }}
+
+  release:
+    name: Release to crates.io
+    runs-on: ubuntu-latest
+    if: needs.release_please.outputs.release_created == 'true'
+    needs: release_please
+
+    concurrency:
+      group: release
+
+    steps:
+      - name: Configure git
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.symlinks true
+          git config --global fetch.parallel 32
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install cargo plugins
+        run: cargo install cargo-workspaces
+      - name: Publish
+        run: cargo workspaces publish --from-git --yes --token "${{ secrets.CRATES_IO_TOKEN }}"
