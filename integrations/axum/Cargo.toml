@@ -8,3 +8,6 @@ edition = "2021"
 [dependencies]
 axum = { version = "0.6", default-features = true, features = ["headers"] }
 rstml-component = { version = "0.0.0", path = "../../" }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

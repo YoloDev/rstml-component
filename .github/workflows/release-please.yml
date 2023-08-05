@@ -18,7 +18,7 @@ jobs:
       - uses: GoogleCloudPlatform/release-please-action@v3
         id: release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           command: manifest
 
       - run: |
