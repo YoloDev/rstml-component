@@ -6,5 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { version = "0.6", no-default-features = true, features = ["headers"] }
+axum = { version = "0.6", default-features = true, features = ["headers"] }
 rstml-component = { version = "0.0.0", path = "../../" }
