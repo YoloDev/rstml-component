@@ -34,7 +34,7 @@ jobs:
       - uses: Swatinem/rust-cache@v1
 
       - name: Lint
-        run: cargo clippy --locked -- -D warnings
+        run: cargo clippy --locked --all -- -D warnings
 
       - name: Run tests
-        run: cargo test --locked
+        run: cargo test --locked --workspace
