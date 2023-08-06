@@ -2,7 +2,7 @@ use axum::{headers::ContentType, http::StatusCode, response::IntoResponse, Typed
 
 pub use rstml_component::{
 	html, move_html, write_html, For, HtmlAttributeFormatter, HtmlAttributeValue, HtmlComponent,
-	HtmlContent, HtmlFormatter,
+	HtmlContent, HtmlFormatter, RawText,
 };
 
 pub struct Html<C>(pub C);

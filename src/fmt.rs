@@ -159,7 +159,28 @@ pub trait HtmlContent: Sized {
 	}
 }
 
+/// A trait representing a value that can be used as an attribute value in HTML components.
+///
+/// Types that implement this trait allow customization of how their values are formatted
+/// when used as attribute values in HTML tags. This trait is primarily used in conjunction
+/// with the [HtmlAttributeFormatter] to control the serialization of attribute values.
+///
+/// This trait is particularly useful when you need to handle complex attribute values, such
+/// as custom data types, enums, or values that require special formatting.
 pub trait HtmlAttributeValue {
+	/// Formats the value and writes it to the provided [HtmlAttributeFormatter].
+	///
+	/// This method is used to customize how the implementing type's value is serialized as an
+	/// attribute value in HTML. Implementations of this method should write the formatted value
+	/// to the provided [HtmlAttributeFormatter] using the appropriate formatting syntax.
+	///
+	/// # Arguments
+	///
+	/// - `formatter`: A mutable reference to the [HtmlAttributeFormatter] that handles the output.
+	///
+	/// # Returns
+	///
+	/// A [std::fmt::Result] indicating the success or failure of the formatting operation.
 	fn fmt(self, formatter: &mut HtmlAttributeFormatter) -> fmt::Result;
 }
 
