@@ -96,8 +96,11 @@ jobs:
         with:
           name: docs
 
-      - name: Unzip docs
-        run: tar -xzf docs.tar.gz
+      - name: Unzip docs to ./docs/
+        run: |
+          mkdir -p ./docs/
+          tar -C ./docs/ -xzf docs.tar.gz
+          tree ./docs/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
