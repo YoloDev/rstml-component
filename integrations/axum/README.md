@@ -16,7 +16,7 @@ To use `rstml-component-axum` in your Axum project, add it as a dependency in yo
 
 ```toml
 [dependencies]
-rstml-component-axum = "0.1"
+rstml-component-axum = "0.1.0"
 ```
 
 <!-- x-release-please-end-version -->
