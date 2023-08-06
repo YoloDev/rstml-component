@@ -227,7 +227,28 @@ pub trait HtmlAttributeValue {
 	fn fmt(self, formatter: &mut HtmlAttributeFormatter) -> fmt::Result;
 }
 
+/// A struct for embedding raw, unsanitized HTML content.
+///
+/// The `RawText` struct allows you to include raw HTML content without any sanitization or
+/// modification. This is useful when you need to merge multiple HTML fragments that are known
+/// to be safe or pre-sanitized. The `RawText` content is intended for situations where you have
+/// direct control over the content being embedded and ensure its safety.
 pub struct RawText<V>(V);
+
+impl<V: AsRef<[u8]>> RawText<V> {
+	/// Creates a new `RawText` instance with the given raw HTML content.
+	///
+	/// # Arguments
+	///
+	/// - `value`: The raw HTML content as a byte slice.
+	///
+	/// # Returns
+	///
+	/// A `RawText` instance wrapping the raw HTML content.
+	pub fn new(value: V) -> Self {
+		Self(value)
+	}
+}
 
 impl<V: AsRef<[u8]>> HtmlContent for RawText<V> {
 	fn fmt(self, formatter: &mut HtmlFormatter) -> fmt::Result {
