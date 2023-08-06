@@ -7,9 +7,7 @@ edition = "2021"
 
 [dependencies]
 bytes = "1"
-rstml-component-macro = { version = "0.0.0", path = "./macro" }
-
-[exa]
+rstml-component-macro = { version = "0.0.0", path = "macro" }
 
 [workspace]
-members = ["./macro", "./integrations/axum"]
+members = ["macro", "integrations/axum"]
