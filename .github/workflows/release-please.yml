@@ -60,6 +60,7 @@ jobs:
 
       - name: Configure sccache
         if: github.repository == 'YoloDev/rstml-component'
+        shell: bash
         run: |
           echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
           echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
@@ -71,5 +72,6 @@ jobs:
 
       - name: Install cargo plugins
         run: cargo install cargo-workspaces
+
       - name: Publish
         run: cargo workspaces publish --from-git --yes --token "${{ secrets.CRATES_IO_TOKEN }}"

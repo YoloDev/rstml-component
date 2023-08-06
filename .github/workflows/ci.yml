@@ -39,6 +39,7 @@ jobs:
 
       - name: Configure sccache
         if: github.repository == 'YoloDev/rstml-component'
+        shell: bash
         run: |
           echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
           echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
