@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.1](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.1.0...rstml-component-v0.1.1) (2023-08-06)
+
+
+### Features
+
+* add RawText ([0034e71](https://github.com/YoloDev/rstml-component/commit/0034e716fc0871a689b72b27a03acf88c982a476))
+* add Sanitized ([44c4074](https://github.com/YoloDev/rstml-component/commit/44c40747bff46fb37352d83b59704f4ef5c82b41))
+* re-export Sanitized and SanitizeConfig from axum package ([a48384e](https://github.com/YoloDev/rstml-component/commit/a48384e3689c1b296906be60ac3f204068214a18))
+
+
+### Bug Fixes
+
+* sanitizer config rename ([e3bd381](https://github.com/YoloDev/rstml-component/commit/e3bd38199942407a2630dcb38b9b7245be5c4b3f))
+
 ## 0.1.0 (2023-08-06)
 
 
