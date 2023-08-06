@@ -4,16 +4,24 @@
 
 use axum::{headers::ContentType, http::StatusCode, response::IntoResponse, TypedHeader};
 
-pub use rstml_component::{
-	html, move_html, write_html, For, HtmlAttributeFormatter, HtmlAttributeValue, HtmlComponent,
-	HtmlContent, HtmlFormatter, RawText,
-};
-
-#[cfg(feature = "sanitize")]
-#[cfg_attr(docsrs, doc(cfg(feature = "sanitize")))]
-pub use rstml_component::{SanitizeConfig, Sanitized};
+use rstml_component::{HtmlContent, HtmlFormatter};
 
 pub struct Html<C>(pub C);
+
+impl<C> Html<C>
+where
+	C: FnOnce(&mut HtmlFormatter) -> std::fmt::Result,
+{
+	pub fn from_fn(f: C) -> Self {
+		Html(f)
+	}
+}
+
+impl<C: HtmlContent> From<C> for Html<C> {
+	fn from(value: C) -> Self {
+		Self(value)
+	}
+}
 
 impl<C: HtmlContent> HtmlContent for Html<C> {
 	fn fmt(self, formatter: &mut HtmlFormatter) -> std::fmt::Result {
