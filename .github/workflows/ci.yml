@@ -100,7 +100,8 @@ jobs:
         run: |
           mkdir -p ./docs/
           tar -C ./docs/ -xzf docs.tar.gz --strip-components 2
-          tree ./docs/
+          # tree ./docs/
+          echo '<!DOCTYPE html><meta charset="utf-8"><title>Redirecting to https://yolodev.github.io/rstml-component/rstml_component/index.html</title><meta http-equiv="refresh" content="0; URL=https://yolodev.github.io/rstml-component/rstml_component/index.html"><link rel="canonical" href="https://yolodev.github.io/rstml-component/rstml_component/index.html">' > ./docs/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
