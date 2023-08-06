@@ -20,8 +20,13 @@
 		{ "type": "deps", "section": "Dependencies" }
 	],
 	"packages": {
-		".": {},
+		".": {
+			"exclude-paths": ["macro", "integrations"],
+			"extra-files": ["README.md", "macro/README.md"]
+		},
 		"macro": {},
-		"integrations/axum": {}
+		"integrations/axum": {
+			"extra-files": ["integrations/axum/README.md"]
+		}
 	}
 }

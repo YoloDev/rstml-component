@@ -16,10 +16,14 @@
 
 To use `rstml-component` in your Rust project, simply add it as a dependency in your `Cargo.toml`:
 
+<!-- x-release-please-start-version -->
+
 ```toml
 [dependencies]
-rstml-component = "0.1"
+rstml-component = "0.1.0"
 ```
+
+<!-- x-release-please-end-version -->
 
 ## Usage
 

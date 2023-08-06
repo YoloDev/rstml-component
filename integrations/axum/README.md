@@ -12,10 +12,14 @@
 
 To use `rstml-component-axum` in your Axum project, add it as a dependency in your `Cargo.toml`:
 
+<!-- x-release-please-start-version -->
+
 ```toml
 [dependencies]
 rstml-component-axum = "0.1"
 ```
+
+<!-- x-release-please-end-version -->
 
 ## Usage
 
