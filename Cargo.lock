@@ -755,7 +755,7 @@ dependencies = [
 
 [[package]]
 name = "rstml-component"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ammonia",
  "bytes",
@@ -764,7 +764,7 @@ dependencies = [
 
 [[package]]
 name = "rstml-component-axum"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "rstml-component",
