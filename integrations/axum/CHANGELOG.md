@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/YoloDev/rstml-component/compare/rstml-component-axum-v0.1.1...rstml-component-axum-v0.2.0) (2023-08-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* re-exports of rstml-component are removed, as the macros doesn't properly work when re-exported.
+
+### Features
+
+* add helper method from_fn to Html ([e9c4934](https://github.com/YoloDev/rstml-component/commit/e9c4934d6a1b2f309d5eaf7df9343fa2307a34e0))
+
 ## [0.1.1](https://github.com/YoloDev/rstml-component/compare/rstml-component-axum-v0.1.0...rstml-component-axum-v0.1.1) (2023-08-06)
 
 
