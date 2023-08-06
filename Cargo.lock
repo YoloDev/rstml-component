@@ -543,7 +543,7 @@ dependencies = [
 
 [[package]]
 name = "rstml-component"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "bytes",
  "rstml-component-macro",
@@ -551,7 +551,7 @@ dependencies = [
 
 [[package]]
 name = "rstml-component-axum"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "axum",
  "rstml-component",
@@ -560,7 +560,7 @@ dependencies = [
 
 [[package]]
 name = "rstml-component-macro"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "convert_case",
  "indexmap",
