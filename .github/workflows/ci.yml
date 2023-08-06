@@ -99,7 +99,7 @@ jobs:
       - name: Unzip docs to ./docs/
         run: |
           mkdir -p ./docs/
-          tar -C ./docs/ -xzf docs.tar.gz
+          tar -C ./docs/ -xzf docs.tar.gz --strip-components 2
           tree ./docs/
 
       - name: Upload artifact
