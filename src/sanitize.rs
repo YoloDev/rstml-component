@@ -1,11 +1,12 @@
 use crate::{HtmlContent, HtmlFormatter};
+use ammonia::Builder;
 use std::{fmt, io, sync::OnceLock};
 
-pub use ammonia::Builder as SanitizeConfig;
+pub type SanitizeConfig = Builder<'static>;
 
-static DEFAULT_SANITIZER: OnceLock<Builder<'static>> = OnceLock::new();
+static DEFAULT_SANITIZER: OnceLock<SanitizeConfig> = OnceLock::new();
 
-fn default_sanitizer() -> &'static Builder<'static> {
+fn default_sanitizer() -> &'static SanitizeConfig {
 	DEFAULT_SANITIZER.get_or_init(Builder::default)
 }
 
@@ -15,7 +16,7 @@ enum Sanitizer {
 	Default,
 
 	/// Use the given sanitizer.
-	Builder(&'static Builder<'static>),
+	Builder(&'static SanitizeConfig),
 }
 
 impl Default for Sanitizer {
@@ -24,8 +25,8 @@ impl Default for Sanitizer {
 	}
 }
 
-impl AsRef<Builder<'static>> for Sanitizer {
-	fn as_ref(&self) -> &Builder<'static> {
+impl AsRef<SanitizeConfig> for Sanitizer {
+	fn as_ref(&self) -> &SanitizeConfig {
 		match self {
 			Self::Default => default_sanitizer(),
 			Self::Builder(builder) => builder,
@@ -75,7 +76,7 @@ where
 	/// # Returns
 	///
 	/// A `Sanitized` instance wrapping the HTML content that will be sanitized using the specified sanitizer.
-	pub fn new_with_sanitizer(value: V, sanitizer: &'static Builder<'static>) -> Self {
+	pub fn new_with_sanitizer(value: V, sanitizer: &'static SanitizeConfig) -> Self {
 		Self(value, Sanitizer::Builder(sanitizer))
 	}
 
@@ -90,7 +91,7 @@ where
 	/// # Returns
 	///
 	/// A new `Sanitized` instance with the specified sanitizer.
-	pub fn with_sanitizer(self, sanitizer: &'static Builder<'static>) -> Self {
+	pub fn with_sanitizer(self, sanitizer: &'static SanitizeConfig) -> Self {
 		Self(self.0, Sanitizer::Builder(sanitizer))
 	}
 }
