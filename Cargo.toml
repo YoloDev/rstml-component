@@ -2,6 +2,9 @@
 name = "rstml-component"
 version = "0.1.0"
 edition = "2021"
+description = "HTML Component Library for Rust"
+license.workspace = true
+repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -11,3 +14,5 @@ rstml-component-macro = { version = "0.1.0", path = "macro" }
 
 [workspace]
 members = ["macro", "integrations/axum"]
+package.license = "MIT"
+package.repository = "https://github.com/YoloDev/rstml-component"
