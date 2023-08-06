@@ -89,4 +89,4 @@ We welcome your contributions! If you encounter issues, have suggestions, or wou
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](../../LICENSE).

@@ -17,4 +17,4 @@ For detailed information and examples of how to use the macros provided by `rstm
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](../LICENSE).
