@@ -1,3 +1,7 @@
+// only enables the `doc_cfg` feature when
+// the `docsrs` configuration attribute is defined
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 mod builtins;
 mod component;
 mod fmt;
@@ -11,4 +15,5 @@ pub use fmt::{HtmlAttributeFormatter, HtmlAttributeValue, HtmlContent, HtmlForma
 pub use rstml_component_macro::{html, move_html, write_html, HtmlComponent};
 
 #[cfg(feature = "sanitize")]
+#[cfg_attr(docsrs, doc(cfg(feature = "sanitize")))]
 pub use sanitize::{SanitizeConfig, Sanitized};

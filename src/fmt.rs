@@ -236,7 +236,7 @@ impl<'a> HtmlFormatter<'a> {
 
 	/// Writes an HTML end tag to the formatter's buffer.
 	///
-	/// This method appends an HTML end tag "</tag>" to the formatter's buffer. The provided `tag` is used
+	/// This method appends an HTML end tag "&lt;/tag&gt;" to the formatter's buffer. The provided `tag` is used
 	/// as the tag name for the end tag.
 	///
 	/// # Arguments

@@ -1,3 +1,7 @@
+// only enables the `doc_cfg` feature when
+// the `docsrs` configuration attribute is defined
+#![cfg_attr(docsrs, feature(doc_cfg))]
+
 use axum::{headers::ContentType, http::StatusCode, response::IntoResponse, TypedHeader};
 
 pub use rstml_component::{
@@ -6,6 +10,7 @@ pub use rstml_component::{
 };
 
 #[cfg(feature = "sanitize")]
+#[cfg_attr(docsrs, doc(cfg(feature = "sanitize")))]
 pub use rstml_component::{SanitizeConfig, Sanitized};
 
 pub struct Html<C>(pub C);
