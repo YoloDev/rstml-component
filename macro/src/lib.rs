@@ -21,9 +21,3 @@ pub fn write_html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 pub fn derive_html_component(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 	component::derive_html_component(input.into()).into()
 }
-
-// #[test]
-// fn trybuild() {
-// 	let t = trybuild::TestCases::new();
-// 	t.compile_fail("tests/compile_fail/*.rs");
-// }
