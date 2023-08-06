@@ -56,20 +56,16 @@ jobs:
         run: cargo test --workspace
 
       - name: Create docs
-        if: matrix.os == 'ubuntu-latest'
-        run: cargo doc --workspace
+        if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
+        run: |
+          cargo doc --workspace
+          echo '<!DOCTYPE html><meta charset="utf-8"><title>Redirecting to https://yolodev.github.io/rstml-component/rstml_component/index.html</title><meta http-equiv="refresh" content="0; URL=https://yolodev.github.io/rstml-component/rstml_component/index.html"><link rel="canonical" href="https://yolodev.github.io/rstml-component/rstml_component/index.html">' > ./target/doc/index.html
 
-      - name: Zip docs
-        if: matrix.os == 'ubuntu-latest'
-        run: tar -czf docs.tar.gz target/doc
-
-      - name: Save docs as artifact
-        if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: docs
-          path: docs.tar.gz
-          retention-days: 1
+          path: "./target/doc/"
 
   publish-docs:
     name: Publish docs
@@ -91,23 +87,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Download docs artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: docs
-
-      - name: Unzip docs to ./docs/
-        run: |
-          mkdir -p ./docs/
-          tar -C ./docs/ -xzf docs.tar.gz --strip-components 2
-          # tree ./docs/
-          echo '<!DOCTYPE html><meta charset="utf-8"><title>Redirecting to https://yolodev.github.io/rstml-component/rstml_component/index.html</title><meta http-equiv="refresh" content="0; URL=https://yolodev.github.io/rstml-component/rstml_component/index.html"><link rel="canonical" href="https://yolodev.github.io/rstml-component/rstml_component/index.html">' > ./docs/index.html
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: "./docs/"
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
