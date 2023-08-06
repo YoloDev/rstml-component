@@ -65,7 +65,7 @@ async fn index() -> impl IntoResponse {
 }
 ```
 
-For more detailed information and examples, please refer to our [Documentation](https://https://docs.rs/rstml-component).
+For more detailed information and examples, please refer to our [Documentation](https://docs.rs/rstml-component).
 
 <!-- ## Contributing
 

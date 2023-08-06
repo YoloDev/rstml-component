@@ -1,6 +1,6 @@
 # rstml-component-macro: Macros for rstml-component
 
-`rstml-component-macro` is a sub-crate that provides essential macros for the `rstml-component` library. While it's not intended for direct use, you can explore example usages in the [documentation for `rstml-component`](https://https://docs.rs/rstml-component).
+`rstml-component-macro` is a sub-crate that provides essential macros for the `rstml-component` library. While it's not intended for direct use, you can explore example usages in the [documentation for `rstml-component`](https://docs.rs/rstml-component).
 
 ## Usage
 
@@ -17,7 +17,7 @@ rstml-component = "0.1.0"
 
 ## Documentation
 
-For detailed information and examples of how to use the macros provided by `rstml-component-macro`, please refer to the [documentation for `rstml-component`](https://https://docs.rs/rstml-component).
+For detailed information and examples of how to use the macros provided by `rstml-component-macro`, please refer to the [documentation for `rstml-component`](https://docs.rs/rstml-component).
 
 ## License
 
