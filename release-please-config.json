@@ -21,7 +21,7 @@
 	],
 	"packages": {
 		".": {},
-		"./macro": {},
-		"./integrations/axum": {}
+		"macro": {},
+		"integrations/axum": {}
 	}
 }
