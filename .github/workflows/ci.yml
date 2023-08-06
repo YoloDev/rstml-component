@@ -49,7 +49,7 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
       - name: Lint
-        run: cargo clippy --locked --all -- -D warnings
+        run: cargo clippy --all -- -D warnings
 
       - name: Run tests
-        run: cargo test --locked --workspace
+        run: cargo test --workspace
