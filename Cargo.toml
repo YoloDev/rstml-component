@@ -11,6 +11,10 @@ repository.workspace = true
 [dependencies]
 bytes = "1"
 rstml-component-macro = { version = "0.1.0", path = "macro" }
+ammonia = { version = "3", optional = true }
+
+[features]
+sanitize = ["dep:ammonia"]
 
 [workspace]
 members = ["macro", "integrations/axum"]
