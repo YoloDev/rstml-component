@@ -138,14 +138,51 @@ impl<'a> HtmlFormatter<'a> {
 	}
 }
 
+/// A trait representing content that can be formatted into HTML representation.
+///
+/// Types that implement this trait define how they should be formatted as HTML content.
+/// This trait provides methods to write the formatted content to various output formats,
+/// such as a byte buffer or a string.
 pub trait HtmlContent: Sized {
+	/// Formats the content and writes it to the provided [HtmlFormatter].
+	///
+	/// This method defines how the implementing type's content should be formatted as HTML.
+	/// Implementations of this method should use the provided [HtmlFormatter] to write the
+	/// formatted content according to the desired syntax and structure.
+	///
+	/// # Arguments
+	///
+	/// - `formatter`: A mutable reference to the [HtmlFormatter] that handles the output.
+	///
+	/// # Returns
+	///
+	/// A [std::fmt::Result] indicating the success or failure of the formatting operation.
 	fn fmt(self, formatter: &mut HtmlFormatter) -> fmt::Result;
 
+	/// Writes the formatted content to the provided byte buffer.
+	///
+	/// This method creates an [HtmlFormatter] that writes to the given `buffer` and uses
+	/// the `fmt` method to write the formatted content into the buffer.
+	///
+	/// # Arguments
+	///
+	/// - `buffer`: A mutable reference to the byte buffer where the formatted content will be written.
+	///
+	/// # Returns
+	///
+	/// A [std::fmt::Result] indicating the success or failure of the formatting operation.
 	fn write_to(self, buffer: &mut BytesMut) -> fmt::Result {
 		let mut formatter = HtmlFormatter::new(buffer);
 		self.fmt(&mut formatter)
 	}
 
+	/// Converts the formatted content into a [Bytes] buffer.
+	///
+	/// This method writes the formatted content to a byte buffer and returns it as a [Bytes] object.
+	///
+	/// # Returns
+	///
+	/// A [Result] containing the [Bytes] object if successful, or a [std::fmt::Error] if formatting fails.
 	fn into_bytes(self) -> Result<Bytes, fmt::Error> {
 		let mut buffer = BytesMut::new();
 
@@ -153,6 +190,15 @@ pub trait HtmlContent: Sized {
 		Ok(buffer.freeze())
 	}
 
+	/// Converts the formatted content into a [String].
+	///
+	/// This method writes the formatted content to a byte buffer, then attempts to convert it into
+	/// a [String].
+	///
+	/// # Returns
+	///
+	/// A [Result] containing the [String] if successful, or a [std::fmt::Error] if formatting or
+	/// conversion to [String] fails.
 	fn into_string(self) -> Result<String, fmt::Error> {
 		let bytes = self.into_bytes()?;
 		String::from_utf8(bytes.to_vec()).map_err(|_| fmt::Error)
@@ -164,9 +210,6 @@ pub trait HtmlContent: Sized {
 /// Types that implement this trait allow customization of how their values are formatted
 /// when used as attribute values in HTML tags. This trait is primarily used in conjunction
 /// with the [HtmlAttributeFormatter] to control the serialization of attribute values.
-///
-/// This trait is particularly useful when you need to handle complex attribute values, such
-/// as custom data types, enums, or values that require special formatting.
 pub trait HtmlAttributeValue {
 	/// Formats the value and writes it to the provided [HtmlAttributeFormatter].
 	///
