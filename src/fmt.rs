@@ -3,12 +3,22 @@ use std::fmt;
 
 mod escape;
 
+/// A formatter for serializing HTML attribute values.
 pub struct HtmlAttributeFormatter<'a> {
 	any_written: bool,
 	buffer: &'a mut BytesMut,
 }
 
 impl<'a> HtmlAttributeFormatter<'a> {
+	/// Creates a new `HtmlAttributeFormatter` instance with the provided buffer.
+	///
+	/// # Arguments
+	///
+	/// - `buffer`: A mutable reference to the [BytesMut] buffer where the formatted content will be written.
+	///
+	/// # Returns
+	///
+	/// A new `HtmlAttributeFormatter` instance associated with the provided buffer.
 	fn new(buffer: &'a mut BytesMut) -> Self {
 		Self {
 			any_written: false,

@@ -53,12 +53,12 @@ jobs:
         run: cargo clippy --all -- -D warnings
 
       - name: Run tests
-        run: cargo test --workspace
+        run: cargo test --workspace --all-features
 
       - name: Create docs
         if: matrix.os == 'ubuntu-latest' && github.ref == 'refs/heads/main'
         run: |
-          cargo doc --workspace
+          cargo doc --workspace --all-features
           echo '<!DOCTYPE html><meta charset="utf-8"><title>Redirecting to https://yolodev.github.io/rstml-component/rstml_component/index.html</title><meta http-equiv="refresh" content="0; URL=https://yolodev.github.io/rstml-component/rstml_component/index.html"><link rel="canonical" href="https://yolodev.github.io/rstml-component/rstml_component/index.html">' > ./target/doc/index.html
 
       - name: Upload artifact
