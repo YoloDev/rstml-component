@@ -54,3 +54,47 @@ jobs:
 
       - name: Run tests
         run: cargo test --workspace
+
+      - name: Create docs
+        run: cargo doc --workspace
+
+      - name: Save docs as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: target/doc
+          retention-days: 1
+
+  publish-docs:
+    name: Publish docs
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.repository == 'YoloDev/rstml-component' && github.ref == 'refs/heads/main'
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download docs artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docs
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: "./docs/"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
