@@ -29,9 +29,24 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.symlinks true
           git config --global fetch.parallel 32
+
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+
+      - name: Run sccache-cache
+        if: github.repository == 'YoloDev/rstml-component'
+        uses: mozilla-actions/sccache-action@v0.0.3
+
+      - name: Configure sccache
+        if: github.repository == 'YoloDev/rstml-component'
+        run: |
+          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+          echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
+          echo "SCCACHE_BUCKET=${{ vars.SCCACHE_BUCKET }}" >> $GITHUB_ENV
+          echo "SCCACHE_REGION=${{ vars.SCCACHE_REGION }}" >> $GITHUB_ENV
+          echo "SCCACHE_ENDPOINT=${{ secrets.SCCACHE_ENDPOINT }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.SCCACHE_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
       - name: Lint
         run: cargo clippy --locked --all -- -D warnings
