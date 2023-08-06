@@ -11,4 +11,4 @@ pub use fmt::{HtmlAttributeFormatter, HtmlAttributeValue, HtmlContent, HtmlForma
 pub use rstml_component_macro::{html, move_html, write_html, HtmlComponent};
 
 #[cfg(feature = "sanitize")]
-pub use sanitize::{Builder, Sanitized};
+pub use sanitize::{SanitizeConfig, Sanitized};

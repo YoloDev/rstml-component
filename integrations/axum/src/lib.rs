@@ -5,6 +5,9 @@ pub use rstml_component::{
 	HtmlContent, HtmlFormatter, RawText,
 };
 
+#[cfg(feature = "sanitize")]
+pub use rstml_component::{SanitizeConfig, Sanitized};
+
 pub struct Html<C>(pub C);
 
 impl<C: HtmlContent> HtmlContent for Html<C> {

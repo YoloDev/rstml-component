@@ -1,7 +1,7 @@
 use crate::{HtmlContent, HtmlFormatter};
 use std::{fmt, io, sync::OnceLock};
 
-pub use ammonia::Builder;
+pub use ammonia::Builder as SanitizeConfig;
 
 static DEFAULT_SANITIZER: OnceLock<Builder<'static>> = OnceLock::new();
 
