@@ -498,6 +498,18 @@ fn display(value: fmt::Arguments, mut write: impl FnMut(&[u8])) -> fmt::Result {
 	}
 }
 
+impl<'a> HtmlContent for fmt::Arguments<'a> {
+	fn fmt(self, formatter: &mut HtmlFormatter) -> fmt::Result {
+		display(self, |value| formatter.write(value))
+	}
+}
+
+impl<'a> HtmlAttributeValue for fmt::Arguments<'a> {
+	fn fmt(self, formatter: &mut HtmlAttributeFormatter) -> fmt::Result {
+		display(self, |value| formatter.write(value))
+	}
+}
+
 macro_rules! impl_simple_write {
 	($ty:ty, as_ref) => {
 		impl HtmlAttributeValue for $ty {
