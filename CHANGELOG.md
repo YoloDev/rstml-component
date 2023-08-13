@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.1.1...rstml-component-v0.1.2) (2023-08-13)
+
+
+### Features
+
+* impl HtmlContent and HtmlAttributeValue for fmt::Arguments ([b3461ea](https://github.com/YoloDev/rstml-component/commit/b3461ea40d91b4e05edea066286cce2c47f74b09))
+* impl HtmlContent and HtmlAttributeValue for tuples ([04c807b](https://github.com/YoloDev/rstml-component/commit/04c807b50a0fb0d10e2e9bfdd6645a698ef234f7))
+
 ## [0.1.1](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.1.0...rstml-component-v0.1.1) (2023-08-06)
 
 
