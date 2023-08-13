@@ -1,5 +1,9 @@
 # Changelog
 
+* The following workspace dependencies were updated
+  * dependencies
+    * rstml-component bumped from 0.1.1 to 0.1.2
+
 ## [0.2.0](https://github.com/YoloDev/rstml-component/compare/rstml-component-axum-v0.1.1...rstml-component-axum-v0.2.0) (2023-08-06)
 
 
