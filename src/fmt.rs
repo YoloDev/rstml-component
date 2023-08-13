@@ -563,3 +563,50 @@ impl_simple_write!(i128, raw Display);
 impl_simple_write!(isize, raw Display);
 impl_simple_write!(f32, raw Display);
 impl_simple_write!(f64, raw Display);
+
+macro_rules! impl_tuple_write {
+	((
+		$($i:ident,)+
+	)) => {
+		#[automatically_derived]
+		impl<$($i,)+> HtmlContent for ($($i,)+)
+		where
+			$($i: HtmlContent,)+
+		{
+			fn fmt(self, formatter: &mut HtmlFormatter) -> fmt::Result {
+				#[allow(non_snake_case)]
+				let ($($i,)+) = self;
+				$(
+					$i.fmt(formatter)?;
+				)+
+				Ok(())
+			}
+		}
+
+		#[automatically_derived]
+		impl<$($i,)+> HtmlAttributeValue for ($($i,)+)
+		where
+			$($i: HtmlAttributeValue,)+
+		{
+			fn fmt(self, formatter: &mut HtmlAttributeFormatter) -> fmt::Result {
+				#[allow(non_snake_case)]
+				let ($($i,)+) = self;
+				$(
+					$i.fmt(formatter)?;
+				)+
+				Ok(())
+			}
+		}
+	};
+
+	($f:ident) => {
+		impl_tuple_write!(($f,));
+	};
+
+	($f:ident $($i:ident)+) => {
+		impl_tuple_write!(($f, $($i,)+));
+		impl_tuple_write!($($i)+);
+	};
+}
+
+impl_tuple_write!(A B C D E F G H I J K L M N O P Q R S T U V W X Y Z);
