@@ -1,6 +1,6 @@
 [package]
 name = "rstml-component-axum"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 description = "Integration with rstml-component for Axum"
 license.workspace = true
@@ -14,7 +14,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 axum = { version = "0.6", default-features = true, features = ["headers"] }
-rstml-component = { version = "0.1.2", path = "../../" }
+rstml-component = { version = "0.1.3", path = "../../" }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

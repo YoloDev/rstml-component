@@ -20,7 +20,7 @@ To use `rstml-component` in your Rust project, simply add it as a dependency in 
 
 ```toml
 [dependencies]
-rstml-component = "0.1.2"
+rstml-component = "0.1.3"
 ```
 
 <!-- x-release-please-end-version -->
