@@ -239,12 +239,6 @@ impl<'a> ToTokens for TemplateInstructionWriter<'a> {
 				}
 
 				tokens.extend(quote!(#formatter.write_content(#name { #(#props),* })?;));
-
-				// tokens.extend(quote!(
-				// 	#formatter.write_content(
-				// 		(::rstml_component::Props<#name> { #(#props),* }).into_component().into_content()
-				// 	)?;
-				// ));
 			}
 		}
 	}
