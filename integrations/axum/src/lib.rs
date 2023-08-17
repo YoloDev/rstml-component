@@ -3,7 +3,6 @@
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 use axum::{headers::ContentType, http::StatusCode, response::IntoResponse, TypedHeader};
-
 use rstml_component::{HtmlContent, HtmlFormatter};
 
 pub struct Html<C>(pub C);

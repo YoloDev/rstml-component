@@ -329,12 +329,9 @@ impl TemplateParser {
 	}
 
 	fn visit_html_block_attribute(&mut self, _element_name: &NodeName, block: NodeBlock) {
-		// We do not support arbitrary attribute names.
-		self.diagnostics.push(
-			block
-				.span()
-				.error("Arbitrary attribute names are not supported."),
-		);
+		self
+			.instructions
+			.push(TemplateWriteInstruction::DynamicAttributes(block));
 	}
 
 	fn visit_html_static_attribute(&mut self, element_name: &NodeName, attribute: KeyedAttribute) {
@@ -414,6 +411,6 @@ impl TemplateParser {
 	fn visit_block(&mut self, block: NodeBlock) {
 		self
 			.instructions
-			.push(TemplateWriteInstruction::Content(block));
+			.push(TemplateWriteInstruction::DynamicContent(block));
 	}
 }

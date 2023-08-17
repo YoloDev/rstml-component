@@ -30,6 +30,12 @@ fn empty_div_with_attributes() {
 }
 
 #[test]
+fn dynamic_attributes() {
+	let attributes = ("class", "test");
+	assert_html_eq!("<div class=\"test\"></div>", <div {attributes} />);
+}
+
+#[test]
 fn doctype() {
 	assert_html_eq!("<!DOCTYPE html>", <!DOCTYPE html>);
 }

@@ -218,6 +218,11 @@ impl<'a> HtmlFormatter<'a> {
 		HtmlAttributeFormatter::write_value(self.buffer, value)
 	}
 
+	pub fn write_attributes(&mut self, values: impl HtmlAttributes) -> fmt::Result {
+		let mut attribute_formatter = HtmlAttributesFormatter { inner: self };
+		values.fmt(&mut attribute_formatter)
+	}
+
 	/// Writes a self-closing indicator to the formatter's buffer.
 	///
 	/// This method appends a self-closing indicator " />" to the formatter's buffer. It's commonly used
@@ -303,6 +308,17 @@ impl<'a> HtmlFormatter<'a> {
 	}
 }
 
+pub struct HtmlAttributesFormatter<'a, 'b> {
+	inner: &'a mut HtmlFormatter<'b>,
+}
+
+impl<'a, 'b> HtmlAttributesFormatter<'a, 'b> {
+	pub fn write_attribute(&mut self, name: &[u8], value: impl HtmlAttributeValue) -> fmt::Result {
+		self.inner.write_attribute_name(name);
+		self.inner.write_attribute_value(value)
+	}
+}
+
 /// A trait representing content that can be formatted into HTML representation.
 ///
 /// Types that implement this trait define how they should be formatted as HTML content.
@@ -368,6 +384,10 @@ pub trait HtmlContent: Sized {
 		let bytes = self.into_bytes()?;
 		String::from_utf8(bytes.to_vec()).map_err(|_| fmt::Error)
 	}
+}
+
+pub trait HtmlAttributes {
+	fn fmt(self, formatter: &mut HtmlAttributesFormatter) -> fmt::Result;
 }
 
 /// A trait representing a value that can be used as an attribute value in HTML components.
@@ -450,6 +470,12 @@ impl HtmlAttributeValue for () {
 	}
 }
 
+impl HtmlAttributes for () {
+	fn fmt(self, _formatter: &mut HtmlAttributesFormatter) -> fmt::Result {
+		Ok(())
+	}
+}
+
 impl<T: HtmlContent> HtmlContent for Option<T> {
 	fn fmt(self, formatter: &mut HtmlFormatter) -> fmt::Result {
 		match self {
@@ -465,6 +491,22 @@ impl<T: HtmlAttributeValue> HtmlAttributeValue for Option<T> {
 			None => Ok(()),
 			Some(template) => template.fmt(formatter),
 		}
+	}
+}
+
+impl<T: HtmlAttributes> HtmlAttributes for Option<T> {
+	fn fmt(self, formatter: &mut HtmlAttributesFormatter) -> fmt::Result {
+		match self {
+			None => Ok(()),
+			Some(template) => template.fmt(formatter),
+		}
+	}
+}
+
+impl<N: AsRef<[u8]>, T: HtmlAttributeValue> HtmlAttributes for (N, T) {
+	fn fmt(self, formatter: &mut HtmlAttributesFormatter) -> fmt::Result {
+		let (name, value) = self;
+		formatter.write_attribute(name.as_ref(), value)
 	}
 }
 

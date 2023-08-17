@@ -63,7 +63,8 @@ enum TemplateWriteInstruction {
 	Text(NodeText),
 	RawText(RawText),
 	Comment(NodeComment),
-	Content(NodeBlock),
+	DynamicAttributes(NodeBlock),
+	DynamicContent(NodeBlock),
 	Component(Component),
 }
 
@@ -182,7 +183,21 @@ impl<'a> ToTokens for TemplateInstructionWriter<'a> {
 				tokens.extend(quote!(#formatter.write_comment(#value);));
 			}
 
-			TemplateWriteInstruction::Content(content) => {
+			TemplateWriteInstruction::DynamicAttributes(content) => {
+				match content {
+					NodeBlock::ValidBlock(Block { stmts, .. }) if stmts.len() == 1 => {
+						if let Stmt::Expr(expr, None) = &stmts[0] {
+							tokens.extend(quote!(#formatter.write_attributes(#expr)?;));
+							return;
+						}
+					}
+					_ => (),
+				}
+
+				tokens.extend(quote!(#formatter.write_attributes(#content)?;));
+			}
+
+			TemplateWriteInstruction::DynamicContent(content) => {
 				match content {
 					NodeBlock::ValidBlock(Block { stmts, .. }) if stmts.len() == 1 => {
 						if let Stmt::Expr(expr, None) = &stmts[0] {
