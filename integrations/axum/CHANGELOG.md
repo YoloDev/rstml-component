@@ -4,6 +4,20 @@
   * dependencies
     * rstml-component bumped from 0.1.1 to 0.1.2
 
+## [0.2.2](https://github.com/YoloDev/rstml-component/compare/rstml-component-axum-v0.2.1...rstml-component-axum-v0.2.2) (2023-08-17)
+
+
+### Features
+
+* dynamic attributes ([2d0da18](https://github.com/YoloDev/rstml-component/commit/2d0da18727dc7adf43a8bc21f012853deec242e8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * rstml-component bumped from 0.1.2 to 0.1.3
+
 ## [0.2.0](https://github.com/YoloDev/rstml-component/compare/rstml-component-axum-v0.1.1...rstml-component-axum-v0.2.0) (2023-08-06)
 
 

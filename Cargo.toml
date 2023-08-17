@@ -1,6 +1,6 @@
 [package]
 name = "rstml-component"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "HTML Component Library for Rust"
 license.workspace = true
@@ -14,7 +14,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 bytes = "1"
-rstml-component-macro = { version = "0.1.0", path = "macro" }
+rstml-component-macro = { version = "0.1.1", path = "macro" }
 ammonia = { version = "3", optional = true }
 
 [features]
