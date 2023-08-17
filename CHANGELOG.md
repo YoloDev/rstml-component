@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.0](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.1.3...rstml-component-v0.2.0) (2023-08-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* trigger release
+
+### Features
+
+* trigger release ([c853efa](https://github.com/YoloDev/rstml-component/commit/c853efa95717807f4a074681db771099d9d6f215))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * rstml-component-macro bumped from 0.1.1 to 0.2.0
+
 ## [0.1.3](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.1.2...rstml-component-v0.1.3) (2023-08-17)
 
 
