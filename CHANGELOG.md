@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.2.0...rstml-component-v0.2.1) (2023-08-18)
+
+
+### Features
+
+* export HtmlAttributes and formatter ([427a758](https://github.com/YoloDev/rstml-component/commit/427a758bb7fc900f7f59fd5c1fc8e241fda45e16))
+
 ## [0.2.0](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.1.3...rstml-component-v0.2.0) (2023-08-17)
 
 
