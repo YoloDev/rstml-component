@@ -10,7 +10,7 @@ To utilize the macros provided by `rstml-component-macro`, you need to add `rstm
 
 ```toml
 [dependencies]
-rstml-component = "0.2.0"
+rstml-component = "0.2.1"
 ```
 
 <!-- x-release-please-end-version -->
