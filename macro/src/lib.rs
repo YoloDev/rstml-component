@@ -23,6 +23,17 @@ pub fn derive_html_component(input: proc_macro::TokenStream) -> proc_macro::Toke
 	component::derive_html_component(input.into()).into()
 }
 
+/// makes a function that returns std::fmt::Result into a component function, argument to the
+/// attribute is the name of the struct that will be generated
+/// usage:
+/// ```rust
+/// #[component(MyComponent)]
+/// pub fn my_component(title: String) -> std::fmt::Result {
+///		component_html!(
+///			<div>{title}</div>
+///		)
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn component(
 	attr: proc_macro::TokenStream,
@@ -31,6 +42,7 @@ pub fn component(
 	utils::component(attr.into(), input.into()).into()
 }
 
+/// use inside component function, expands to `write_html!(formatter, #macro_input)`
 #[proc_macro]
 pub fn component_html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 	utils::component_html(input.into()).into()

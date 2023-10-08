@@ -5,6 +5,7 @@ use syn::{parse_quote, ItemImpl, ItemStruct, parse::Parse, Ident};
 use crate::template::Template;
 
 pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
+	// parse input
 	let input: syn::ItemFn = match syn::parse2(input) {
 		Ok(input) => input,
 		Err(err) => return err.to_compile_error(),
@@ -13,6 +14,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 		Ok(struct_name) => struct_name,
 		Err(err) => return err.to_compile_error(),
 	};
+	// check if input is valid
 	assert!(
 		input.sig.constness.is_none(),
 		"component function must not be const"
@@ -70,7 +72,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	// generics are copied to impl but not to impl ... for SomeStruct<T here there are no generics>
 	// so make a Option<Generics> and use it in impl
 	let mut impl_generics = input.sig.generics.clone();
-	impl_generics.where_clause = None; // this gets copied to impl so remove it for struct<>
+	impl_generics.where_clause = None; // this gets copied to impl so remove it for Struct<>
 
 	let fn_body = input.block;
 	let mut impl_component: ItemImpl = parse_quote! {
