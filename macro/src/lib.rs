@@ -30,3 +30,8 @@ pub fn component(
 ) -> proc_macro::TokenStream {
 	utils::component(attr.into(), input.into()).into()
 }
+
+#[proc_macro]
+pub fn component_html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
+	utils::component_html(input.into()).into()
+}
