@@ -1,6 +1,8 @@
-use proc_macro2::TokenStream;
+use proc_macro2::{TokenStream, Span};
 use quote::{quote, ToTokens};
-use syn::{parse_quote, ItemImpl, ItemStruct};
+use syn::{parse_quote, ItemImpl, ItemStruct, parse::Parse, Ident};
+
+use crate::template::Template;
 
 pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	let input: syn::ItemFn = match syn::parse2(input) {
@@ -86,4 +88,46 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 		#gen_struct
 		#impl_component
 	}
+}
+
+struct ComponentHtmlExpr {
+	template: Template,
+}
+
+impl Parse for ComponentHtmlExpr {
+	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
+		Ok(Self {
+			template: input.parse()?,
+		})
+	}
+}
+
+impl ToTokens for ComponentHtmlExpr {
+	fn to_tokens(&self, tokens: &mut TokenStream) {
+		let Self {
+			template,
+		} = self;
+
+		let formatter = Ident::new("__html", Span::call_site());
+		let template = template.with_formatter(&formatter);
+
+		tokens.extend(quote!({
+			let #formatter: &mut ::rstml_component::HtmlFormatter = formatter.as_mut();
+			#formatter.write_content(
+				|#formatter: &mut ::rstml_component::HtmlFormatter| -> ::std::fmt::Result {
+					#template
+					Ok(())
+				},
+			)
+		}));
+	}
+}
+
+pub fn component_html(input: TokenStream) -> TokenStream {
+	let expr: ComponentHtmlExpr = match syn::parse2(input) {
+		Ok(expr) => expr,
+		Err(err) => return err.to_compile_error(),
+	};
+
+	expr.into_token_stream()
 }

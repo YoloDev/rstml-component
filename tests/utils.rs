@@ -1,9 +1,9 @@
 use rstml_component::HtmlContent;
-use rstml_component_macro::{component, write_html};
+use rstml_component_macro::{component, component_html};
 
 #[component(MyComponent)]
 fn my_component(title: String) -> std::fmt::Result {
-	write_html!(formatter,
+	component_html!(
 		<div>{title}</div>
 	)
 }
@@ -14,7 +14,7 @@ fn my_generic_component<T>(title: T) -> std::fmt::Result
 where
 	T: Into<String>,
 {
-	write_html!(formatter,
+	component_html!(
 		<div>{title.into()}</div>
 	)
 }
