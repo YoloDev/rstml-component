@@ -1,12 +1,12 @@
 use proc_macro2::{TokenStream, Span};
 use quote::{quote, ToTokens};
-use syn::{parse_quote, ItemImpl, ItemStruct, parse::Parse, Ident};
+use syn::{parse_quote, ItemImpl, ItemStruct, parse::Parse, Ident, Block};
 
 use crate::template::Template;
 
 pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	// parse input
-	let input: syn::ItemFn = match syn::parse2(input) {
+	let mut input: syn::ItemFn = match syn::parse2(input) {
 		Ok(input) => input,
 		Err(err) => return err.to_compile_error(),
 	};
@@ -42,10 +42,11 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 		_ => panic!("component function must return std::fmt::Result"),
 	}
 
-	let visibility = input.vis;
+	let visibility = input.vis.clone();
 
 	let mut struct_args = Vec::new();
 	let mut arg_vars = Vec::new();
+	let mut idents = Vec::new();
 	for arg in input.sig.inputs.iter() {
 		match arg {
 			syn::FnArg::Typed(pat) => {
@@ -56,6 +57,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 				};
 				arg_vars.push(quote!(let #ident = self.#ident;));
 				struct_args.push(quote!(#visibility #ident: #ty,));
+				idents.push(quote!(#ident));
 			}
 			_ => panic!("component function must have typed arguments"),
 		}
@@ -86,9 +88,22 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	};
 	impl_component.generics = input.sig.generics.clone();
 
+	// modify function to return the generated struct
+	input.sig.output = parse_quote! {
+		-> #struct_name #impl_generics
+	};
+	input.block = parse_quote! {
+		{
+			#struct_name {
+				#(#idents)*
+			}
+		}
+	};
+
 	quote! {
 		#gen_struct
 		#impl_component
+		#input
 	}
 }
 

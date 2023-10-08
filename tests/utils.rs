@@ -21,9 +21,7 @@ where
 
 #[test]
 fn test_utils() {
-	let component = MyComponent {
-		title: "Hello there".into(),
-	};
+	let component = my_component("Hello there".to_string());
 	let out = component
 		.into_string()
 		.expect("formatting works and produces valid utf-8");
