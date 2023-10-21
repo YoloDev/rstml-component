@@ -1,22 +1,18 @@
 use rstml_component::HtmlContent;
-use rstml_component_macro::{component, component_html};
+use rstml_component_macro::{component, html};
 
-#[component(MyComponent)]
-fn my_component(title: String) -> std::fmt::Result {
-	component_html!(
+#[component(pub MyComponent)]
+fn my_component(title: String) -> impl HtmlContent {
+	html! {
 		<div>{title}</div>
-	)
+	}
 }
 
-// generics must be specified in this format
 #[component(MyGenericComponent)]
-fn my_generic_component<T>(title: T) -> std::fmt::Result
-where
-	T: Into<String>,
-{
-	component_html!(
+fn my_generic_component(title: impl Into<String>) -> impl HtmlContent {
+	html! {
 		<div>{title.into()}</div>
-	)
+	}
 }
 
 #[test]
