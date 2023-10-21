@@ -23,19 +23,18 @@ pub fn derive_html_component(input: proc_macro::TokenStream) -> proc_macro::Toke
 	component::derive_html_component(input.into()).into()
 }
 
-/// Makes a function that returns `std::fmt::Result` into a component function, argument to the
-/// attribute is the name of the struct that will be generated.
+/// Turns a function into a component function, arguments to the attribute macro are the visibility
+/// for the generated struct and the name of the struct. The function should return `impl HtmlContent`.
 ///
 /// # Usage
 ///
 /// ```
-/// #[component(MyComponent)]
-/// pub fn my_component(title: String) -> std::fmt::Result {
-///     component_html!(
-///         <div>{title}</div>
-///     )
+/// #[component(pub MyComponent)]
+/// fn my_component(title: impl Into<String>) -> impl HtmlContent {
+///		html! {
+///			<div>{title.into()}</div>
+///		}
 /// }
-/// ```
 #[proc_macro_attribute]
 pub fn component(
 	attr: proc_macro::TokenStream,
