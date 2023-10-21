@@ -34,8 +34,7 @@ fn create_not_used_ident(
 		} else {
 			false
 		}
-	} /* used.ident == Some(ident.clone()) */)
-	{
+	}) {
 		ident = Ident::new(&format!("{}T", ident), Span::call_site());
 	}
 	ident
