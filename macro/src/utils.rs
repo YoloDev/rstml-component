@@ -3,10 +3,10 @@ use proc_macro2_diagnostics::Diagnostic;
 use quote::{quote, ToTokens};
 use syn::{
 	parse::Parse,
-	punctuated::{Iter, Punctuated},
+	punctuated::Punctuated,
 	token::{Brace, Bracket, Comma, Paren},
-	Field, FnArg, GenericParam, Generics, Ident, Pat, PatIdent, Token, Type, TypeImplTrait,
-	TypeParam, TypeTuple, Visibility,
+	Field, FnArg, GenericParam, Generics, Ident, Pat, Token, Type, TypeImplTrait, TypeParam,
+	TypeTuple, Visibility,
 };
 
 struct AttrParser {
@@ -44,28 +44,28 @@ fn lowercase_ident(ident: Ident) -> Ident {
 	Ident::new(&ident.to_string().to_lowercase(), ident.span())
 }
 
-fn is_field_ident_used(ident: Ident, used: Vec<Pat>) -> bool {
-	used.iter().any(|used| match used {
-		Pat::Ident(ident_pat) => ident_pat.ident == ident,
+fn is_field_ident_used(ident: &Ident, used: Vec<Pat>) -> bool {
+	used.iter().any(|used| match used.clone() {
+		Pat::Ident(ident_pat) => ident_pat.ident == *ident,
 		Pat::Slice(slice_pat) => {
 			let mut new_used = Vec::new();
-			new_used.extend(slice_pat.elems.clone());
-			is_field_ident_used(ident.clone(), new_used)
+			new_used.extend(slice_pat.elems);
+			is_field_ident_used(ident, new_used)
 		}
 		Pat::TupleStruct(tuple_struct_pat) => {
 			let mut new_used = Vec::new();
-			new_used.extend(tuple_struct_pat.elems.clone());
-			is_field_ident_used(ident.clone(), new_used)
+			new_used.extend(tuple_struct_pat.elems);
+			is_field_ident_used(ident, new_used)
 		}
 		Pat::Struct(struct_pat) => {
 			let mut new_used = Vec::new();
 			new_used.extend(struct_pat.fields.iter().map(|field| *field.pat.clone()));
-			is_field_ident_used(ident.clone(), new_used)
+			is_field_ident_used(ident, new_used)
 		}
 		Pat::Tuple(tuple_pat) => {
 			let mut new_used = Vec::new();
-			new_used.extend(tuple_pat.elems.clone());
-			is_field_ident_used(ident.clone(), new_used)
+			new_used.extend(tuple_pat.elems);
+			is_field_ident_used(ident, new_used)
 		}
 		_ => false,
 	})
@@ -89,7 +89,7 @@ fn create_unique_field_ident(
 			unreachable!()
 		}
 	}));
-	while is_field_ident_used(ident.clone(), used.clone()) {
+	while is_field_ident_used(&ident, used.clone()) {
 		ident = Ident::new(&format!("{}_", ident), Span::call_site());
 	}
 	ident
@@ -138,7 +138,7 @@ fn generate_generic(
 	impl_type: TypeImplTrait,
 ) -> (Field, TypeParam) {
 	let type_ident = create_unique_generic_ident(
-		generics.params.clone(),
+		generics.params,
 		Some(Ident::new(
 			ident.to_string().to_uppercase().as_str(),
 			Span::call_site(),
@@ -156,7 +156,7 @@ fn generate_generic(
 		attrs: vec![],
 		vis: Visibility::Public(Token![pub](Span::call_site())),
 		mutability: syn::FieldMutability::None,
-		ident: Some(ident.clone()),
+		ident: Some(ident),
 		ty: Type::Verbatim(type_ident.into_token_stream()),
 		colon_token: Some(Token![:](Span::call_site())),
 	};
@@ -168,7 +168,7 @@ fn generate_normal_field(ident: Ident, ty: Type) -> Field {
 		attrs: vec![],
 		vis: Visibility::Public(Token![pub](Span::call_site())),
 		mutability: syn::FieldMutability::None,
-		ident: Some(ident.clone()),
+		ident: Some(ident),
 		ty: Type::Verbatim(ty.into_token_stream()),
 		colon_token: Some(Token![:](Span::call_site())),
 	}
@@ -177,7 +177,7 @@ fn generate_normal_field(ident: Ident, ty: Type) -> Field {
 fn generate_one(ty: Type, generics: &mut Generics, ident: Ident) -> Field {
 	match ty {
 		Type::ImplTrait(impl_type) => {
-			let (field, type_param) = generate_generic(generics.clone(), ident.clone(), impl_type);
+			let (field, type_param) = generate_generic(generics.clone(), ident, impl_type);
 			generics.params.push(GenericParam::Type(type_param));
 			field
 		}
@@ -300,6 +300,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 						let ident = create_unique_field_ident(
 							fields.clone(),
 							input.sig.inputs.clone(),
+							// path segments should always have at least one element so unwrap is ok
 							Some(tuple_struct_pat.path.segments.last().unwrap().ident.clone()),
 						);
 						let field = generate_one(ty, &mut generics, ident);
@@ -309,6 +310,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 						let ident = create_unique_field_ident(
 							fields.clone(),
 							input.sig.inputs.clone(),
+							// path segments should always have at least one element so unwrap is ok
 							Some(struct_pat.path.segments.last().unwrap().ident.clone()),
 						);
 						let field = generate_one(ty, &mut generics, ident);
@@ -333,8 +335,8 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 		}
 	}
 
-	let ident = attr.name.clone();
-	let vis = attr.vis.clone();
+	let ident = attr.name;
+	let vis = attr.vis;
 
 	let generated_struct = quote! {
 		#[derive(::rstml_component::HtmlComponent)]
@@ -345,7 +347,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 
 	let input_ident = input.sig.ident.clone();
 	let mut fn_args = Vec::new();
-	for field in fields.clone().iter() {
+	for field in fields.iter() {
 		// unwrap shouldn't panic since each field is generated with an ident
 		let ident = field.ident.clone().unwrap();
 		fn_args.push(quote!(self.#ident,));
