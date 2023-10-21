@@ -338,12 +338,12 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	let ident = attr.name;
 	let vis = attr.vis;
 
+	let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
+
 	let generated_struct = quote! {
 		#[derive(::rstml_component::HtmlComponent)]
-		#vis struct #ident #generics {#fields}
+		#vis struct #ident #impl_generics #where_clause {#fields}
 	};
-
-	let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
 	let input_ident = input.sig.ident.clone();
 	let mut fn_args = Vec::new();
