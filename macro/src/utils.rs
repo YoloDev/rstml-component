@@ -263,6 +263,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	let input_ident = input.sig.ident.clone();
 	let mut fn_args = Vec::new();
 	for field in fields.clone().iter() {
+		// unwrap shouldn't panic since each field is generated with an ident
 		let ident = field.ident.clone().unwrap();
 		fn_args.push(quote!(self.#ident,));
 	}
