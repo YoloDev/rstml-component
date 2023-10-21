@@ -5,11 +5,6 @@ mod write;
 
 #[proc_macro]
 pub fn html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
-	write::html(input.into(), false).into()
-}
-
-#[proc_macro]
-pub fn move_html(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 	write::html(input.into(), true).into()
 }
 
