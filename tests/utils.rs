@@ -15,6 +15,15 @@ fn my_generic_component(title: impl Into<String>) -> impl HtmlContent {
 	}
 }
 
+struct Foo(String);
+
+#[component(MyGroupComponent)]
+fn my_group_component(Foo(title): Foo) -> impl HtmlContent {
+	html! {
+		<div>{title}</div>
+	}
+}
+
 #[test]
 fn test_utils() {
 	let component = my_component("Hello there".to_string());
@@ -29,8 +38,13 @@ fn test_utils() {
 		.into_string()
 		.expect("formatting works and produces valid utf-8");
 
+	let group_out = my_group_component(Foo("Hello there".to_string()))
+		.into_string()
+		.expect("formatting works and produces valid utf-8");
+
 	let expected = r#"<div>Hello there</div>"#;
 
 	assert_eq!(out, expected);
 	assert_eq!(generic_out, expected);
+	assert_eq!(group_out, expected);
 }

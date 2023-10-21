@@ -3,7 +3,7 @@ use proc_macro2_diagnostics::Diagnostic;
 use quote::{quote, ToTokens};
 use syn::{
 	parse::Parse,
-	punctuated::Punctuated,
+	punctuated::{Iter, Punctuated},
 	token::{Brace, Bracket, Comma, Paren},
 	Field, FnArg, GenericParam, Generics, Ident, Pat, PatIdent, Token, Type, TypeImplTrait,
 	TypeParam, TypeTuple, Visibility,
@@ -23,7 +23,7 @@ impl Parse for AttrParser {
 	}
 }
 
-fn create_not_used_ident(
+fn create_unique_generic_ident(
 	used: Punctuated<GenericParam, Comma>,
 	ident_suggestion: Option<Ident>,
 ) -> Ident {
@@ -36,6 +36,61 @@ fn create_not_used_ident(
 		}
 	}) {
 		ident = Ident::new(&format!("{}T", ident), Span::call_site());
+	}
+	ident
+}
+
+fn lowercase_ident(ident: Ident) -> Ident {
+	Ident::new(&ident.to_string().to_lowercase(), ident.span())
+}
+
+fn is_field_ident_used(ident: Ident, used: Vec<Pat>) -> bool {
+	used.iter().any(|used| match used {
+		Pat::Ident(ident_pat) => ident_pat.ident == ident,
+		Pat::Slice(slice_pat) => {
+			let mut new_used = Vec::new();
+			new_used.extend(slice_pat.elems.clone());
+			is_field_ident_used(ident.clone(), new_used)
+		}
+		Pat::TupleStruct(tuple_struct_pat) => {
+			let mut new_used = Vec::new();
+			new_used.extend(tuple_struct_pat.elems.clone());
+			is_field_ident_used(ident.clone(), new_used)
+		}
+		Pat::Struct(struct_pat) => {
+			let mut new_used = Vec::new();
+			new_used.extend(struct_pat.fields.iter().map(|field| *field.pat.clone()));
+			is_field_ident_used(ident.clone(), new_used)
+		}
+		Pat::Tuple(tuple_pat) => {
+			let mut new_used = Vec::new();
+			new_used.extend(tuple_pat.elems.clone());
+			is_field_ident_used(ident.clone(), new_used)
+		}
+		_ => false,
+	})
+}
+
+fn create_unique_field_ident(
+	used: Punctuated<Field, Comma>,
+	all_used: Punctuated<FnArg, Comma>,
+	ident_suggestion: Option<Ident>,
+) -> Ident {
+	let mut ident =
+		lowercase_ident(ident_suggestion.unwrap_or_else(|| Ident::new("arg", Span::call_site())));
+	while used.iter().any(|used| used.ident == Some(ident.clone())) {
+		ident = Ident::new(&format!("{}_", ident), Span::call_site());
+	}
+	let mut used = Vec::new();
+	used.extend(all_used.iter().map(|arg| {
+		if let FnArg::Typed(pat_type) = arg {
+			*pat_type.pat.clone()
+		} else {
+			unreachable!()
+		}
+	}));
+	while is_field_ident_used(ident.clone(), used.clone()) {
+		ident = Ident::new(&format!("{}_", ident), Span::call_site());
 	}
 	ident
 }
@@ -79,13 +134,13 @@ fn surround_type(ty: &mut Type, surround: impl Surround) {
 
 fn generate_generic(
 	generics: Generics,
-	pat_ident: PatIdent,
+	ident: Ident,
 	impl_type: TypeImplTrait,
 ) -> (Field, TypeParam) {
-	let type_ident = create_not_used_ident(
+	let type_ident = create_unique_generic_ident(
 		generics.params.clone(),
 		Some(Ident::new(
-			pat_ident.ident.to_string().to_uppercase().as_str(),
+			ident.to_string().to_uppercase().as_str(),
 			Span::call_site(),
 		)),
 	);
@@ -101,42 +156,42 @@ fn generate_generic(
 		attrs: vec![],
 		vis: Visibility::Public(Token![pub](Span::call_site())),
 		mutability: syn::FieldMutability::None,
-		ident: Some(pat_ident.ident.clone()),
+		ident: Some(ident.clone()),
 		ty: Type::Verbatim(type_ident.into_token_stream()),
 		colon_token: Some(Token![:](Span::call_site())),
 	};
 	(field, type_param)
 }
 
-fn generate_normal_field(pat_ident: PatIdent, ty: Type) -> Field {
+fn generate_normal_field(ident: Ident, ty: Type) -> Field {
 	Field {
 		attrs: vec![],
 		vis: Visibility::Public(Token![pub](Span::call_site())),
 		mutability: syn::FieldMutability::None,
-		ident: Some(pat_ident.ident.clone()),
+		ident: Some(ident.clone()),
 		ty: Type::Verbatim(ty.into_token_stream()),
 		colon_token: Some(Token![:](Span::call_site())),
 	}
 }
 
-fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent) -> Field {
+fn generate_one(ty: Type, generics: &mut Generics, ident: Ident) -> Field {
 	match ty {
 		Type::ImplTrait(impl_type) => {
-			let (field, type_param) = generate_generic(generics.clone(), pat_ident.clone(), impl_type);
+			let (field, type_param) = generate_generic(generics.clone(), ident.clone(), impl_type);
 			generics.params.push(GenericParam::Type(type_param));
 			field
 		}
 		Type::Array(array_type) => {
 			let new_ty = *array_type.elem;
 			let len = array_type.len;
-			let mut field = generate_one(new_ty, generics, pat_ident);
+			let mut field = generate_one(new_ty, generics, ident);
 			suffix_type(&mut field.ty, quote!(; #len));
 			surround_type(&mut field.ty, array_type.bracket_token);
 			field
 		}
 		Type::Paren(paren_type) => {
 			let new_ty = *paren_type.elem;
-			let mut field = generate_one(new_ty, generics, pat_ident);
+			let mut field = generate_one(new_ty, generics, ident);
 			surround_type(&mut field.ty, paren_type.paren_token);
 			field
 		}
@@ -149,7 +204,7 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent) -> Field
 			if let Some(const_token) = ptr_type.const_token {
 				prefix_tokens.extend(const_token.into_token_stream());
 			}
-			let mut field = generate_one(new_ty, generics, pat_ident);
+			let mut field = generate_one(new_ty, generics, ident);
 			prefix_type(&mut field.ty, prefix_tokens);
 			field
 		}
@@ -162,13 +217,13 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent) -> Field
 			if let Some(mutability) = ref_type.mutability {
 				prefix_tokens.extend(mutability.into_token_stream());
 			}
-			let mut field = generate_one(new_ty, generics, pat_ident);
+			let mut field = generate_one(new_ty, generics, ident);
 			prefix_type(&mut field.ty, prefix_tokens);
 			field
 		}
 		Type::Slice(slice_type) => {
 			let new_ty = *slice_type.elem;
-			let mut field = generate_one(new_ty, generics, pat_ident);
+			let mut field = generate_one(new_ty, generics, ident);
 			surround_type(&mut field.ty, slice_type.bracket_token);
 			field
 		}
@@ -176,7 +231,7 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent) -> Field
 			let TypeTuple { paren_token, elems } = typle_type;
 			let mut types: Punctuated<Type, Comma> = Punctuated::new();
 			for new_ty in elems.iter() {
-				let field = generate_one(new_ty.clone(), generics, pat_ident.clone());
+				let field = generate_one(new_ty.clone(), generics, ident.clone());
 				types.push(field.ty);
 			}
 
@@ -185,11 +240,11 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent) -> Field
 				elems: types,
 			});
 
-			let field = generate_normal_field(pat_ident, new_ty);
+			let field = generate_normal_field(ident, new_ty);
 			field
 		}
 		_ => {
-			let field = generate_normal_field(pat_ident, ty);
+			let field = generate_normal_field(ident, ty);
 			field
 		}
 	}
@@ -227,24 +282,52 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	let mut fields: Punctuated<Field, syn::token::Comma> = Punctuated::new();
 
 	for arg in input.sig.inputs.iter() {
-		if let FnArg::Receiver(receiver) = arg {
-			diagnostics.push(
-				syn::Error::new_spanned(
-					receiver.self_token,
-					"component function must not have self argument",
-				)
-				.into(),
-			);
-		} else if let FnArg::Typed(pat_type) = arg {
-			let pat = *pat_type.pat.clone();
-			let ty = *pat_type.ty.clone();
-			match pat {
-				Pat::Ident(pat_ident) => {
-					let field = generate_one(ty, &mut generics, pat_ident);
-					fields.push(field);
-				}
-				_ => {
-					diagnostics.push(syn::Error::new_spanned(pat, "couldn't parse function argument").into());
+		match arg {
+			FnArg::Receiver(_) => {
+				diagnostics.push(
+					syn::Error::new_spanned(arg, "component function must not have self argument").into(),
+				);
+			}
+			FnArg::Typed(pat_type) => {
+				let pat = *pat_type.pat.clone();
+				let ty = *pat_type.ty.clone();
+				match pat {
+					Pat::Ident(ident_pat) => {
+						let field = generate_one(ty, &mut generics, ident_pat.ident);
+						fields.push(field);
+					}
+					Pat::TupleStruct(tuple_struct_pat) => {
+						let ident = create_unique_field_ident(
+							fields.clone(),
+							input.sig.inputs.clone(),
+							Some(tuple_struct_pat.path.segments.last().unwrap().ident.clone()),
+						);
+						let field = generate_one(ty, &mut generics, ident);
+						fields.push(field);
+					}
+					Pat::Struct(struct_pat) => {
+						let ident = create_unique_field_ident(
+							fields.clone(),
+							input.sig.inputs.clone(),
+							Some(struct_pat.path.segments.last().unwrap().ident.clone()),
+						);
+						let field = generate_one(ty, &mut generics, ident);
+						fields.push(field);
+					}
+					Pat::Tuple(_tuple_pat) => {
+						let ident = create_unique_field_ident(fields.clone(), input.sig.inputs.clone(), None);
+						let field = generate_one(ty, &mut generics, ident);
+						fields.push(field);
+					}
+					Pat::Slice(_slice_pat) => {
+						let ident = create_unique_field_ident(fields.clone(), input.sig.inputs.clone(), None);
+						let field = generate_one(ty, &mut generics, ident);
+						fields.push(field);
+					}
+					_ => {
+						diagnostics
+							.push(syn::Error::new_spanned(pat, "couldn't parse function argument").into());
+					}
 				}
 			}
 		}
