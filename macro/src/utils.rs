@@ -5,7 +5,7 @@ use syn::{
 	parse::Parse,
 	punctuated::Punctuated,
 	token::{Brace, Bracket, Comma, Paren},
-	Field, FnArg, GenericParam, Generics, Ident, PatIdent, ReturnType, Token, Type, TypeImplTrait,
+	Field, FnArg, GenericParam, Generics, Ident, Pat, PatIdent, Token, Type, TypeImplTrait,
 	TypeParam, TypeTuple, Visibility,
 };
 
@@ -81,7 +81,6 @@ fn generate_generic(
 	generics: Generics,
 	pat_ident: PatIdent,
 	impl_type: TypeImplTrait,
-	vis: Visibility,
 ) -> (Field, TypeParam) {
 	let type_ident = create_not_used_ident(
 		generics.params.clone(),
@@ -100,7 +99,7 @@ fn generate_generic(
 	};
 	let field = Field {
 		attrs: vec![],
-		vis,
+		vis: Visibility::Public(Token![pub](Span::call_site())),
 		mutability: syn::FieldMutability::None,
 		ident: Some(pat_ident.ident.clone()),
 		ty: Type::Verbatim(type_ident.into_token_stream()),
@@ -109,10 +108,10 @@ fn generate_generic(
 	(field, type_param)
 }
 
-fn generate_normal_field(pat_ident: PatIdent, vis: Visibility, ty: Type) -> Field {
+fn generate_normal_field(pat_ident: PatIdent, ty: Type) -> Field {
 	Field {
 		attrs: vec![],
-		vis,
+		vis: Visibility::Public(Token![pub](Span::call_site())),
 		mutability: syn::FieldMutability::None,
 		ident: Some(pat_ident.ident.clone()),
 		ty: Type::Verbatim(ty.into_token_stream()),
@@ -120,25 +119,24 @@ fn generate_normal_field(pat_ident: PatIdent, vis: Visibility, ty: Type) -> Fiel
 	}
 }
 
-fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent, vis: Visibility) -> Field {
+fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent) -> Field {
 	match ty {
 		Type::ImplTrait(impl_type) => {
-			let (field, type_param) =
-				generate_generic(generics.clone(), pat_ident.clone(), impl_type, vis);
+			let (field, type_param) = generate_generic(generics.clone(), pat_ident.clone(), impl_type);
 			generics.params.push(GenericParam::Type(type_param));
 			field
 		}
 		Type::Array(array_type) => {
 			let new_ty = *array_type.elem;
 			let len = array_type.len;
-			let mut field = generate_one(new_ty, generics, pat_ident, vis);
+			let mut field = generate_one(new_ty, generics, pat_ident);
 			suffix_type(&mut field.ty, quote!(; #len));
 			surround_type(&mut field.ty, array_type.bracket_token);
 			field
 		}
 		Type::Paren(paren_type) => {
 			let new_ty = *paren_type.elem;
-			let mut field = generate_one(new_ty, generics, pat_ident, vis);
+			let mut field = generate_one(new_ty, generics, pat_ident);
 			surround_type(&mut field.ty, paren_type.paren_token);
 			field
 		}
@@ -151,7 +149,7 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent, vis: Vis
 			if let Some(const_token) = ptr_type.const_token {
 				prefix_tokens.extend(const_token.into_token_stream());
 			}
-			let mut field = generate_one(new_ty, generics, pat_ident, vis);
+			let mut field = generate_one(new_ty, generics, pat_ident);
 			prefix_type(&mut field.ty, prefix_tokens);
 			field
 		}
@@ -164,13 +162,13 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent, vis: Vis
 			if let Some(mutability) = ref_type.mutability {
 				prefix_tokens.extend(mutability.into_token_stream());
 			}
-			let mut field = generate_one(new_ty, generics, pat_ident, vis);
+			let mut field = generate_one(new_ty, generics, pat_ident);
 			prefix_type(&mut field.ty, prefix_tokens);
 			field
 		}
 		Type::Slice(slice_type) => {
 			let new_ty = *slice_type.elem;
-			let mut field = generate_one(new_ty, generics, pat_ident, vis);
+			let mut field = generate_one(new_ty, generics, pat_ident);
 			surround_type(&mut field.ty, slice_type.bracket_token);
 			field
 		}
@@ -178,7 +176,7 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent, vis: Vis
 			let TypeTuple { paren_token, elems } = typle_type;
 			let mut types: Punctuated<Type, Comma> = Punctuated::new();
 			for new_ty in elems.iter() {
-				let field = generate_one(new_ty.clone(), generics, pat_ident.clone(), vis.clone());
+				let field = generate_one(new_ty.clone(), generics, pat_ident.clone());
 				types.push(field.ty);
 			}
 
@@ -187,11 +185,11 @@ fn generate_one(ty: Type, generics: &mut Generics, pat_ident: PatIdent, vis: Vis
 				elems: types,
 			});
 
-			let field = generate_normal_field(pat_ident, vis, new_ty);
+			let field = generate_normal_field(pat_ident, new_ty);
 			field
 		}
 		_ => {
-			let field = generate_normal_field(pat_ident, vis, ty);
+			let field = generate_normal_field(pat_ident, ty);
 			field
 		}
 	}
@@ -241,8 +239,8 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 			let pat = *pat_type.pat.clone();
 			let ty = *pat_type.ty.clone();
 			match pat {
-				syn::Pat::Ident(pat_ident) => {
-					let field = generate_one(ty, &mut generics, pat_ident, attr.vis.clone());
+				Pat::Ident(pat_ident) => {
+					let field = generate_one(ty, &mut generics, pat_ident);
 					fields.push(field);
 				}
 				_ => {
