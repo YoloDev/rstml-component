@@ -781,6 +781,7 @@ dependencies = [
  "proc-macro2-diagnostics",
  "quote",
  "rstml",
+ "rstml-component",
  "syn 2.0.28",
 ]
 
