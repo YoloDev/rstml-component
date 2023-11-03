@@ -24,11 +24,12 @@ pub fn derive_html_component(input: proc_macro::TokenStream) -> proc_macro::Toke
 /// # Usage
 ///
 /// ```
+/// # use rstml_component::{html, component, HtmlContent};
 /// #[component(pub MyComponent)]
 /// fn my_component(title: impl Into<String>) -> impl HtmlContent {
-///		html! {
-///			<div>{title.into()}</div>
-///		}
+///   html! {
+///     <div>{title.into()}</div>
+///   }
 /// }
 #[proc_macro_attribute]
 pub fn component(

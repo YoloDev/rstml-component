@@ -24,3 +24,6 @@ proc-macro2-diagnostics = "0.10"
 quote = "1"
 rstml = { version = "0.11", default-features = false }
 syn = "2"
+
+[dev-dependencies]
+rstml-component = { path = "../" }

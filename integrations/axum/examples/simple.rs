@@ -1,5 +1,5 @@
 use axum::{response::IntoResponse, routing::get, Router};
-use rstml_component::{move_html, write_html, For, HtmlComponent, HtmlContent};
+use rstml_component::{html, write_html, For, HtmlComponent, HtmlContent};
 use rstml_component_axum::HtmlContentAxiosExt;
 use std::net::SocketAddr;
 
@@ -33,7 +33,7 @@ async fn index() -> impl IntoResponse {
 		("Lord of the Rings", "John Ronald Reuel Tolkien"),
 	];
 
-	move_html!(
+	html!(
 		<div class="books">
 			<For items={books}>
 				{ |f, book| Book::new(book.0, book.1).fmt(f) }
