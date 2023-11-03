@@ -1,20 +1,20 @@
 use proc_macro2::{Span, TokenStream};
-use proc_macro2_diagnostics::Diagnostic;
+use proc_macro2_diagnostics::{Diagnostic, Level};
 use quote::{quote, ToTokens};
 use syn::{
 	parse::Parse,
 	punctuated::Punctuated,
 	token::{Brace, Bracket, Comma, Paren},
 	Field, FnArg, GenericParam, Generics, Ident, Pat, Token, Type, TypeImplTrait, TypeParam,
-	TypeTuple, Visibility,
+	TypeTuple, Visibility, spanned::Spanned,
 };
 
-struct AttrParser {
+struct ComponentAttrs {
 	vis: syn::Visibility,
 	name: syn::Ident,
 }
 
-impl Parse for AttrParser {
+impl Parse for ComponentAttrs {
 	fn parse(input: syn::parse::ParseStream) -> syn::Result<Self> {
 		Ok(Self {
 			vis: input.parse()?,
@@ -257,7 +257,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 		Ok(input) => input,
 		Err(err) => return err.to_compile_error(),
 	};
-	let attr: AttrParser = match syn::parse2(attr) {
+	let attr: ComponentAttrs = match syn::parse2(attr) {
 		Ok(attr) => attr,
 		Err(err) => return err.to_compile_error(),
 	};
@@ -265,16 +265,16 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	// check if input is valid
 	if let Some(constness) = input.sig.constness {
 		diagnostics
-			.push(syn::Error::new_spanned(constness, "component function must not be const").into())
+			.push(Diagnostic::spanned(constness.span(), Level::Error, "component function must not be const"))
 	} else if let Some(asyncness) = input.sig.asyncness {
 		diagnostics
-			.push(syn::Error::new_spanned(asyncness, "component function must not be async").into());
+			.push(Diagnostic::spanned(asyncness.span(), Level::Error, "component function must not be async").into());
 	} else if let Some(unsafety) = input.sig.unsafety {
 		diagnostics
-			.push(syn::Error::new_spanned(unsafety, "component function must not be unsafe").into());
+			.push(Diagnostic::spanned(unsafety.span(), Level::Error, "component function must not be unsafe").into());
 	} else if let Some(ref abi) = input.sig.abi {
 		diagnostics
-			.push(syn::Error::new_spanned(abi, "component function must not have an abi").into());
+			.push(Diagnostic::spanned(abi.span(), Level::Error, "component function must not have an abi").into());
 	}
 
 	let mut generics = input.sig.generics.clone();
@@ -285,7 +285,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 		match arg {
 			FnArg::Receiver(_) => {
 				diagnostics.push(
-					syn::Error::new_spanned(arg, "component function must not have self argument").into(),
+					Diagnostic::spanned(arg.span(), Level::Error, "component function must not have self argument").into(),
 				);
 			}
 			FnArg::Typed(pat_type) => {
@@ -328,7 +328,7 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 					}
 					_ => {
 						diagnostics
-							.push(syn::Error::new_spanned(pat, "couldn't parse function argument").into());
+							.push(Diagnostic::spanned(pat.span(), Level::Error, "couldn't parse function argument").into());
 					}
 				}
 			}
@@ -336,7 +336,10 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	}
 
 	let ident = attr.name;
-	let vis = attr.vis;
+	let vis = match attr.vis {
+		syn::Visibility::Inherited => input.vis.clone(),
+		v => v,
+	};
 
 	let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
@@ -364,8 +367,8 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	let diagnostics = diagnostics.iter().map(|d| d.clone().emit_as_item_tokens());
 	quote! {
 		#(#diagnostics)*
+		#input
 		#generated_struct
 		#impl_block
-		#input
 	}
 }

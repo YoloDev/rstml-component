@@ -1,6 +1,6 @@
 mod component;
 mod template;
-mod utils;
+mod func;
 mod write;
 
 #[proc_macro]
@@ -35,5 +35,5 @@ pub fn component(
 	attr: proc_macro::TokenStream,
 	input: proc_macro::TokenStream,
 ) -> proc_macro::TokenStream {
-	utils::component(attr.into(), input.into()).into()
+	func::component(attr.into(), input.into()).into()
 }
