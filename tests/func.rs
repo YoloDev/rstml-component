@@ -18,7 +18,7 @@ fn my_group_component(Foo(title): Foo) -> impl HtmlContent {
 }
 
 #[test]
-fn test_utils() {
+fn test_func() {
 	let component = MyComponent {
 		title: "Hello there".to_string(),
 	};
