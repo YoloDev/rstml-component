@@ -1,7 +1,9 @@
+use std::net::SocketAddr;
+
 use axum::{response::IntoResponse, routing::get, Router};
 use rstml_component::{html, write_html, For, HtmlComponent, HtmlContent};
 use rstml_component_axum::HtmlContentAxiosExt;
-use std::net::SocketAddr;
+use tokio::net::TcpListener;
 
 #[derive(HtmlComponent)]
 struct Book {
@@ -48,10 +50,12 @@ async fn main() {
 	let app = Router::new().route("/", get(index));
 
 	let addr = SocketAddr::from(([0, 0, 0, 0], 3000));
+	let listener = TcpListener::bind(addr)
+		.await
+		.expect(&format!("Failed to bind a TcpListener to {}", addr));
 	println!("listening on {}", addr);
 
-	axum::Server::bind(&addr)
-		.serve(app.into_make_service())
+	axum::serve(listener, app.into_make_service())
 		.await
 		.unwrap();
 }
