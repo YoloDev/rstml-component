@@ -2,7 +2,8 @@
 // the `docsrs` configuration attribute is defined
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
-use axum::{headers::ContentType, http::StatusCode, response::IntoResponse, TypedHeader};
+use axum::{http::StatusCode, response::IntoResponse};
+use axum_extra::{headers::ContentType, TypedHeader};
 use rstml_component::{HtmlContent, HtmlFormatter};
 
 pub struct Html<C>(pub C);
