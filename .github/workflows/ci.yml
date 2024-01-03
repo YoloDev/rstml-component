@@ -50,11 +50,11 @@ jobs:
           else
             echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
             echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
-            echo "SCCACHE_BUCKET=${{ vars.SCCACHE_BUCKET }}" >> $GITHUB_ENV
-            echo "SCCACHE_REGION=${{ vars.SCCACHE_REGION }}" >> $GITHUB_ENV
-            echo "SCCACHE_ENDPOINT=${{ secrets.SCCACHE_ENDPOINT }}" >> $GITHUB_ENV
-            echo "AWS_ACCESS_KEY_ID=${{ secrets.SCCACHE_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+            echo "SCCACHE_BUCKET=$SCCACHE_BUCKET" >> $GITHUB_ENV
+            echo "SCCACHE_REGION=$SCCACHE_REGION" >> $GITHUB_ENV
+            echo "SCCACHE_ENDPOINT=$SCCACHE_ENDPOINT" >> $GITHUB_ENV
+            echo "AWS_ACCESS_KEY_ID=$SCCACHE_ACCESS_KEY_ID" >> $GITHUB_ENV
+            echo "AWS_SECRET_ACCESS_KEY=$SCCACHE_SECRET_ACCESS_KEY" >> $GITHUB_ENV
           fi
         env:
           SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET }}
