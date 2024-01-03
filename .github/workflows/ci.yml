@@ -45,13 +45,23 @@ jobs:
         if: github.repository == 'YoloDev/rstml-component'
         shell: bash
         run: |
-          echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
-          echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
-          echo "SCCACHE_BUCKET=${{ vars.SCCACHE_BUCKET }}" >> $GITHUB_ENV
-          echo "SCCACHE_REGION=${{ vars.SCCACHE_REGION }}" >> $GITHUB_ENV
-          echo "SCCACHE_ENDPOINT=${{ secrets.SCCACHE_ENDPOINT }}" >> $GITHUB_ENV
-          echo "AWS_ACCESS_KEY_ID=${{ secrets.SCCACHE_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          if [[ -z "${{ secrets.SCCACHE_ENDPOINT }}" ]]; then
+            echo "SCCACHE_ENDPOINT is not set"
+          else
+            echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
+            echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
+            echo "SCCACHE_BUCKET=${{ vars.SCCACHE_BUCKET }}" >> $GITHUB_ENV
+            echo "SCCACHE_REGION=${{ vars.SCCACHE_REGION }}" >> $GITHUB_ENV
+            echo "SCCACHE_ENDPOINT=${{ secrets.SCCACHE_ENDPOINT }}" >> $GITHUB_ENV
+            echo "AWS_ACCESS_KEY_ID=${{ secrets.SCCACHE_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          fi
+        env:
+          SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET }}
+          SCCACHE_REGION: ${{ vars.SCCACHE_REGION }}
+          SCCACHE_ENDPOINT: ${{ secrets.SCCACHE_ENDPOINT }}
+          SCCACHE_ACCESS_KEY_ID: ${{ secrets.SCCACHE_ACCESS_KEY_ID }}
+          SCCACHE_SECRET_ACCESS_KEY: ${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}
 
       - name: Lint
         run: cargo clippy --all -- -D warnings
