@@ -93,8 +93,8 @@ fn kitchen_sink() {
 			</head>
 			<body>
 				<!-- "comment" -->
-				<div hello=attribute.clone() />
-				<div hello=attribute.clone() />
+				<div hello=attribute />
+				<div hello=attribute />
 				<>
 					<div>"1"</div>
 					<div> Hello  world with spaces </div>

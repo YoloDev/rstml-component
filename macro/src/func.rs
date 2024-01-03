@@ -1,11 +1,58 @@
 use proc_macro2::{Span, TokenStream};
 use proc_macro2_diagnostics::{Diagnostic, Level};
-use quote::{format_ident, quote};
+use quote::quote;
 use syn::{
 	parse::Parse, punctuated::Punctuated, spanned::Spanned, token::Comma, Field, FnArg, GenericParam,
 	Generics, Ident, Pat, Path, PathArguments, PathSegment, Token, Type, TypeImplTrait, TypeParam,
 	TypePath, Visibility,
 };
+
+trait IdentPath {
+	fn write_to(&self, target: &mut dyn FnMut(&str));
+}
+
+impl<'a> IdentPath for &'a str {
+	fn write_to(&self, target: &mut dyn FnMut(&str)) {
+		target(self);
+	}
+}
+
+impl IdentPath for usize {
+	fn write_to(&self, target: &mut dyn FnMut(&str)) {
+		target(&self.to_string());
+	}
+}
+
+impl<L, R> IdentPath for (L, R)
+where
+	L: IdentPath,
+	R: IdentPath,
+{
+	fn write_to(&self, target: &mut dyn FnMut(&str)) {
+		self.0.write_to(target);
+		self.1.write_to(target);
+	}
+}
+
+impl<'a> IdentPath for &'a dyn IdentPath {
+	fn write_to(&self, target: &mut dyn FnMut(&str)) {
+		(*self).write_to(target);
+	}
+}
+
+#[derive(Clone)]
+struct IdentParts<I>(I);
+
+impl<'a, I> IdentPath for IdentParts<I>
+where
+	I: Iterator<Item = &'a str> + Clone,
+{
+	fn write_to(&self, target: &mut dyn FnMut(&str)) {
+		for part in self.0.clone() {
+			target(part);
+		}
+	}
+}
 
 struct ComponentAttrs {
 	vis: syn::Visibility,
@@ -19,10 +66,6 @@ impl Parse for ComponentAttrs {
 			name: input.parse()?,
 		})
 	}
-}
-
-fn lowercase_ident(ident: &Ident) -> Ident {
-	Ident::new(&ident.to_string().to_lowercase(), ident.span())
 }
 
 struct ComponentStructBuilder {
@@ -42,19 +85,12 @@ impl ComponentStructBuilder {
 		}
 	}
 
-	fn create_unique_field_ident(&self, ident: &Ident) -> Ident {
-		format_ident!("{}__{}", lowercase_ident(ident), self.fields.len())
-	}
-
-	fn create_unique_generic_ident(&self) -> Ident {
-		format_ident!("__T{}", self.generics.params.len())
-	}
-
-	fn resolve_type(&mut self, ty: &Type) -> Type {
+	fn resolve_type(&mut self, ty: &Type, ident_hint: &dyn IdentPath) -> Type {
 		match ty {
-			Type::ImplTrait(inner) => self.add_generic(inner.clone()),
+			Type::ImplTrait(inner) => self.add_generic(inner.clone(), ident_hint),
+
 			Type::Array(inner) => {
-				let elem = self.resolve_type(&inner.elem);
+				let elem = self.resolve_type(&inner.elem, ident_hint);
 				Type::Array(syn::TypeArray {
 					bracket_token: inner.bracket_token,
 					elem: Box::new(elem),
@@ -62,15 +98,17 @@ impl ComponentStructBuilder {
 					len: inner.len.clone(),
 				})
 			}
+
 			Type::Paren(inner) => {
-				let elem = self.resolve_type(&inner.elem);
+				let elem = self.resolve_type(&inner.elem, ident_hint);
 				Type::Paren(syn::TypeParen {
 					paren_token: inner.paren_token,
 					elem: Box::new(elem),
 				})
 			}
+
 			Type::Ptr(inner) => {
-				let elem = self.resolve_type(&inner.elem);
+				let elem = self.resolve_type(&inner.elem, ident_hint);
 				Type::Ptr(syn::TypePtr {
 					star_token: inner.star_token,
 					const_token: inner.const_token,
@@ -78,8 +116,9 @@ impl ComponentStructBuilder {
 					elem: Box::new(elem),
 				})
 			}
+
 			Type::Reference(inner) => {
-				let elem = self.resolve_type(&inner.elem);
+				let elem = self.resolve_type(&inner.elem, ident_hint);
 				Type::Reference(syn::TypeReference {
 					and_token: inner.and_token,
 					lifetime: inner.lifetime.clone(),
@@ -87,30 +126,35 @@ impl ComponentStructBuilder {
 					elem: Box::new(elem),
 				})
 			}
+
 			Type::Slice(inner) => {
-				let elem = self.resolve_type(&inner.elem);
+				let elem = self.resolve_type(&inner.elem, ident_hint);
 				Type::Slice(syn::TypeSlice {
 					bracket_token: inner.bracket_token,
 					elem: Box::new(elem),
 				})
 			}
+
 			Type::Tuple(inner) => {
 				let elems = inner
 					.elems
 					.iter()
-					.map(|elem| self.resolve_type(elem))
+					.enumerate()
+					.map(|(idx, elem)| self.resolve_type(elem, &(ident_hint, idx)))
 					.collect();
+
 				Type::Tuple(syn::TypeTuple {
 					paren_token: inner.paren_token,
 					elems,
 				})
 			}
+
 			_ => ty.clone(),
 		}
 	}
 
 	fn push_field(&mut self, ident: Ident, ty: Type) {
-		let ty = self.resolve_type(&ty);
+		let ty = self.resolve_type(&ty, &IdentParts(ident.to_string().split('_')));
 
 		let field = Field {
 			attrs: vec![],
@@ -124,13 +168,30 @@ impl ComponentStructBuilder {
 		self.fields.push(field);
 	}
 
-	fn push_non_unique_field(&mut self, ident: &Ident, ty: Type) {
-		let ident = self.create_unique_field_ident(ident);
-		self.push_field(ident, ty);
-	}
+	fn add_generic(&mut self, impl_type: TypeImplTrait, ident_hint: &dyn IdentPath) -> Type {
+		let mut type_ident_str = String::new();
+		type_ident_str.push('T');
+		ident_hint.write_to(&mut |part| {
+			if part.is_empty() {
+				return;
+			}
 
-	fn add_generic(&mut self, impl_type: TypeImplTrait) -> Type {
-		let type_ident = self.create_unique_generic_ident();
+			let first_char = part.chars().next().unwrap();
+			type_ident_str.push(first_char.to_ascii_uppercase());
+			type_ident_str.push_str(&part[first_char.len_utf8()..]);
+		});
+
+		let existing_set = self
+			.generics
+			.type_params()
+			.map(|par| par.ident.to_string())
+			.collect::<std::collections::HashSet<_>>();
+
+		while existing_set.contains(&type_ident_str) {
+			type_ident_str.push('_');
+		}
+
+		let type_ident = Ident::new(&type_ident_str, Span::call_site());
 		let type_param = TypeParam {
 			attrs: vec![],
 			ident: type_ident.clone(),
@@ -165,6 +226,7 @@ impl ComponentStructBuilder {
 
 		let generated_struct = quote! {
 			#[derive(::rstml_component::HtmlComponent)]
+			#[allow(non_snake_case)]
 			#vis struct #ident #impl_generics #where_clause {#fields}
 		};
 
@@ -174,11 +236,13 @@ impl ComponentStructBuilder {
 
 pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	let mut diagnostics: Vec<Diagnostic> = vec![];
+
 	// parse input
 	let input: syn::ItemFn = match syn::parse2(input) {
 		Ok(input) => input,
 		Err(err) => return err.to_compile_error(),
 	};
+
 	let attr: ComponentAttrs = match syn::parse2(attr) {
 		Ok(attr) => attr,
 		Err(err) => return err.to_compile_error(),
@@ -192,32 +256,23 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 			"component function must not be const",
 		))
 	} else if let Some(asyncness) = input.sig.asyncness {
-		diagnostics.push(
-			Diagnostic::spanned(
-				asyncness.span(),
-				Level::Error,
-				"component function must not be async",
-			)
-			.into(),
-		);
+		diagnostics.push(Diagnostic::spanned(
+			asyncness.span(),
+			Level::Error,
+			"component function must not be async",
+		));
 	} else if let Some(unsafety) = input.sig.unsafety {
-		diagnostics.push(
-			Diagnostic::spanned(
-				unsafety.span(),
-				Level::Error,
-				"component function must not be unsafe",
-			)
-			.into(),
-		);
+		diagnostics.push(Diagnostic::spanned(
+			unsafety.span(),
+			Level::Error,
+			"component function must not be unsafe",
+		));
 	} else if let Some(ref abi) = input.sig.abi {
-		diagnostics.push(
-			Diagnostic::spanned(
-				abi.span(),
-				Level::Error,
-				"component function must not have an abi",
-			)
-			.into(),
-		);
+		diagnostics.push(Diagnostic::spanned(
+			abi.span(),
+			Level::Error,
+			"component function must not have an abi",
+		));
 	}
 
 	let mut struct_builder = ComponentStructBuilder::new(attr, input.sig.generics.clone());
@@ -225,35 +280,58 @@ pub fn component(attr: TokenStream, input: TokenStream) -> TokenStream {
 	for arg in input.sig.inputs.iter() {
 		match arg {
 			FnArg::Receiver(_) => {
-				diagnostics.push(
-					Diagnostic::spanned(
-						arg.span(),
-						Level::Error,
-						"component function must not have self argument",
-					)
-					.into(),
-				);
+				diagnostics.push(Diagnostic::spanned(
+					arg.span(),
+					Level::Error,
+					"component function must not have self argument",
+				));
 			}
+
 			FnArg::Typed(pat_type) => {
 				let pat = *pat_type.pat.clone();
 				let ty = *pat_type.ty.clone();
+
 				match pat {
-					Pat::Ident(ident_pat) => struct_builder.push_field(ident_pat.ident, ty),
-					Pat::TupleStruct(tuple_struct_pat) => struct_builder
-						.push_non_unique_field(&tuple_struct_pat.path.segments.last().unwrap().ident, ty),
-					Pat::Struct(struct_pat) => struct_builder
-						.push_non_unique_field(&struct_pat.path.segments.last().unwrap().ident, ty),
-					Pat::Tuple(_tuple_pat) => {
-						struct_builder.push_non_unique_field(&format_ident!("tuple"), ty)
+					Pat::Ident(pat) => struct_builder.push_field(pat.ident, ty),
+
+					Pat::TupleStruct(pat) => {
+						diagnostics.push(Diagnostic::spanned(
+							pat.span(),
+							Level::Error,
+							"tuple struct pattern not supported",
+						));
 					}
-					Pat::Slice(_slice_pat) => {
-						struct_builder.push_non_unique_field(&format_ident!("slice"), ty)
+
+					Pat::Struct(pat) => {
+						diagnostics.push(Diagnostic::spanned(
+							pat.span(),
+							Level::Error,
+							"struct pattern not supported",
+						));
 					}
+
+					Pat::Tuple(pat) => {
+						diagnostics.push(Diagnostic::spanned(
+							pat.span(),
+							Level::Error,
+							"tuple pattern not supported",
+						));
+					}
+
+					Pat::Slice(pat) => {
+						diagnostics.push(Diagnostic::spanned(
+							pat.span(),
+							Level::Error,
+							"slice pattern not supported",
+						));
+					}
+
 					_ => {
-						diagnostics.push(
-							Diagnostic::spanned(pat.span(), Level::Error, "couldn't parse function argument")
-								.into(),
-						);
+						diagnostics.push(Diagnostic::spanned(
+							pat.span(),
+							Level::Error,
+							"couldn't parse function argument",
+						));
 					}
 				}
 			}
