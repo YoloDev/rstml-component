@@ -1,7 +1,7 @@
 [git]
-conventional_commits = true
-filter_unconventional = false
-split_commits = false
+# conventional_commits = true
+# filter_unconventional = false
+# split_commits = false
 commit_parsers = [
 	{ message = "^feat", group = "Features" },
 	{ message = "^fix", group = "Bug Fixes" },
@@ -13,4 +13,4 @@ commit_parsers = [
 	{ message = "^deps", group = "Dependencies" },
 	{ message = "^ci", group = "CI" },
 ]
-filter_commits = false
+# filter_commits = false
