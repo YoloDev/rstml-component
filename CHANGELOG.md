@@ -1,5 +1,28 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+## [0.2.2](https://github.com/YoloDev/rstml-component/compare/0.2.1..0.2.2) - 2024-01-18
+
+### ✨ Features
+
+- Component macro ([#15](https://github.com/YoloDev/rstml-component/pull/15)) - ([af19586](https://github.com/YoloDev/rstml-component/commit/af19586a86e0e760b0269d130962b72d904d5a75))
+
+### 👷 CI
+
+- Add new bot to auto-approve whitelist - ([90b783d](https://github.com/YoloDev/rstml-component/commit/90b783dd9b8301f0e03dd03f626b919e29efa1a0))
+- Use a better token - ([ffb1688](https://github.com/YoloDev/rstml-component/commit/ffb1688c0213bb35b6aa16386cd5b479377ae32c))
+- Setup releaser app - ([4f6fb89](https://github.com/YoloDev/rstml-component/commit/4f6fb8912e2509eda9f09b4f33f5dbc4431aede5))
+- Configure release-plz - ([f8f998f](https://github.com/YoloDev/rstml-component/commit/f8f998fc3e6c33f1c91c6959a0ccb9626f6924be))
+- Configure release-plz - ([ea5c1a4](https://github.com/YoloDev/rstml-component/commit/ea5c1a45bd126551d5f3400ea5c3be75ccf28db4))
+- Configure release-plz - ([82e5e56](https://github.com/YoloDev/rstml-component/commit/82e5e56d987b60a52874cf748e6c307d481aeb5a))
+- Configure release-plz - ([d56b6b9](https://github.com/YoloDev/rstml-component/commit/d56b6b9794fb2f954844c7ea2337037e5a91bb55))
+- Configure release-plz - ([d2978e4](https://github.com/YoloDev/rstml-component/commit/d2978e4421f30165b33d692f286d1de9f84c1b97))
+- Try release-plz - ([c57e2fe](https://github.com/YoloDev/rstml-component/commit/c57e2fef2cde98bc244c98661315f7026b7cfb0a))
+- Only run release-please in main repo - ([7434be1](https://github.com/YoloDev/rstml-component/commit/7434be1059cf30879ee9c190688f8526b8de7411))
+
+# Changelog
+
 ## [0.2.1](https://github.com/YoloDev/rstml-component/compare/rstml-component-v0.2.0...rstml-component-v0.2.1) (2023-08-18)
 
 
