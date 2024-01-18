@@ -1,5 +1,15 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+## [0.2.2](https://github.com/YoloDev/rstml-component/compare/0.2.0..0.2.2) - 2024-01-18
+
+### ✨ Features
+
+- Component macro ([#15](https://github.com/YoloDev/rstml-component/pull/15)) - ([af19586](https://github.com/YoloDev/rstml-component/commit/af19586a86e0e760b0269d130962b72d904d5a75))
+
+# Changelog
+
 ## [0.2.0](https://github.com/YoloDev/rstml-component/compare/rstml-component-macro-v0.1.1...rstml-component-macro-v0.2.0) (2023-08-17)
 
 
