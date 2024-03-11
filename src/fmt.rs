@@ -589,6 +589,7 @@ macro_rules! impl_simple_write {
 
 impl_simple_write!(String, as_ref);
 impl_simple_write!(&str, as_ref);
+impl_simple_write!(&String, as_ref);
 impl_simple_write!(Bytes, as_ref);
 impl_simple_write!(bool, raw Display);
 impl_simple_write!(u8, raw Display);
