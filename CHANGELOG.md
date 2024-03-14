@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.3](https://github.com/YoloDev/rstml-component/compare/0.2.2..0.2.3) - 2024-01-30
+
+### 🔨 Chore
+
+- Update mozilla-actions/sccache-action action to v0.0.4 ([#19](https://github.com/YoloDev/rstml-component/pull/19)) - ([0696364](https://github.com/YoloDev/rstml-component/commit/06963646a1c90ca585a2297c3ba312568aaef6d3))
+
 ## [0.2.2](https://github.com/YoloDev/rstml-component/compare/0.2.1..0.2.2) - 2024-01-18
 
 ### ✨ Features
