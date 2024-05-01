@@ -14,7 +14,7 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
 axum = "0.7.5"
-axum-extra = { version = "0.9", features = ["typed-header"] }
+axum-extra = { version = "0.9.3", features = ["typed-header"] }
 rstml-component = { version = "0.2.3", path = "../../" }
 
 [dev-dependencies]
