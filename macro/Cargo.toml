@@ -18,7 +18,7 @@ proc-macro = true
 
 [dependencies]
 convert_case = "0.6"
-indexmap = "2"
+indexmap = "2.2.6"
 proc-macro2 = "1.0.81"
 proc-macro2-diagnostics = "0.10"
 quote = "1.0.36"
