@@ -18,7 +18,7 @@ axum-extra = { version = "0.9", features = ["typed-header"] }
 rstml-component = { version = "0.2.3", path = "../../" }
 
 [dev-dependencies]
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
 
 [features]
 sanitize = ["rstml-component/sanitize"]
