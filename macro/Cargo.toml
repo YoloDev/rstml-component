@@ -19,7 +19,7 @@ proc-macro = true
 [dependencies]
 convert_case = "0.6"
 indexmap = "2"
-proc-macro2 = "1"
+proc-macro2 = "1.0.81"
 proc-macro2-diagnostics = "0.10"
 quote = "1"
 rstml = { version = "0.11", default-features = false }
