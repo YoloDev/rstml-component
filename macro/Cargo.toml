@@ -22,7 +22,7 @@ indexmap = "2"
 proc-macro2 = "1.0.81"
 proc-macro2-diagnostics = "0.10"
 quote = "1.0.36"
-rstml = { version = "0.11", default-features = false }
+rstml = { version = "0.11.2", default-features = false }
 syn = "2.0.60"
 
 [dev-dependencies]
