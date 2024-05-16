@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7](https://github.com/YoloDev/rstml-component/compare/0.2.6..0.2.7) - 2024-05-16
+
+### ⬆️ Dependencies
+
+- Update rust crate axum to 0.7.5 ([#25](https://github.com/YoloDev/rstml-component/pull/25)) - ([eea3503](https://github.com/YoloDev/rstml-component/commit/eea35038a8565fa82dd374c6baffc2cfb1da74b6))
+
+### 🔨 Chore
+
+- Update rust crate tokio to 1.37.0 ([#32](https://github.com/YoloDev/rstml-component/pull/32)) - ([1297014](https://github.com/YoloDev/rstml-component/commit/1297014a6a013940494c2cda4285a9a8a15f4e0a))
+
 ## [0.2.6](https://github.com/YoloDev/rstml-component/compare/0.2.5..0.2.6) - 2024-01-30
 
 ### 🔨 Chore
