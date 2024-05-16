@@ -1,6 +1,6 @@
 [package]
 name = "rstml-component-macro"
-version = "0.2.2"
+version = "0.2.3"
 edition = "2021"
 description = "Macros for rstml-component"
 license.workspace = true
