@@ -39,7 +39,7 @@ jobs:
 
       - name: Run sccache-cache
         if: github.repository == 'YoloDev/rstml-component'
-        uses: mozilla-actions/sccache-action@v0.0.4
+        uses: mozilla-actions/sccache-action@v0.0.5
 
       - name: Configure sccache
         if: github.repository == 'YoloDev/rstml-component'
