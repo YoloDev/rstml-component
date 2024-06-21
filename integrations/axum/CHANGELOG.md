@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.8](https://github.com/YoloDev/rstml-component/compare/0.2.7..0.2.8) - 2024-06-21
+
+### 🔨 Chore
+
+- Update Cargo.lock dependencies - ([0000000](https://github.com/YoloDev/rstml-component/commit/0000000))
+
 ## [0.2.7](https://github.com/YoloDev/rstml-component/compare/0.2.6..0.2.7) - 2024-05-16
 
 ### ⬆️ Dependencies
