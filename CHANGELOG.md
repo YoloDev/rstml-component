@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5](https://github.com/YoloDev/rstml-component/compare/0.2.4..0.2.5) - 2024-06-23
+
+### ⬆️ Dependencies
+
+- Update rust crate syn to v2.0.68 ([#55](https://github.com/YoloDev/rstml-component/pull/55)) - ([c3a78a4](https://github.com/YoloDev/rstml-component/commit/c3a78a450d272c7e2bed9bbb37b115de366a792d))
+- Update rust crate syn to v2.0.67 ([#53](https://github.com/YoloDev/rstml-component/pull/53)) - ([1f0fa3d](https://github.com/YoloDev/rstml-component/commit/1f0fa3de185d65fbb40c3398f1233631038c1409))
+- Update rust crate proc-macro2 to v1.0.86 ([#52](https://github.com/YoloDev/rstml-component/pull/52)) - ([b368790](https://github.com/YoloDev/rstml-component/commit/b368790443ecab4de1023ddf76746aefd212e7e3))
+
+### 🔨 Chore
+
+- Update mozilla-actions/sccache-action action to v0.0.5 ([#51](https://github.com/YoloDev/rstml-component/pull/51)) - ([5aa88b0](https://github.com/YoloDev/rstml-component/commit/5aa88b06a879d5515c77147367dcc5e47ee5fec0))
+
 ## [0.2.4](https://github.com/YoloDev/rstml-component/compare/0.2.3..0.2.4) - 2024-05-16
 
 ### ⬆️ Dependencies
