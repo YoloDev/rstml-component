@@ -13,9 +13,9 @@ rustdoc-args = ["--cfg", "docsrs"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bytes = "1.6.0"
+bytes = { workspace = true }
 rstml-component-macro = { version = "0.2.3", path = "macro" }
-ammonia = { version = "3.3.0", optional = true }
+ammonia = { workspace = true, optional = true }
 
 [features]
 sanitize = ["dep:ammonia"]
@@ -24,3 +24,17 @@ sanitize = ["dep:ammonia"]
 members = ["macro", "integrations/axum"]
 package.license = "MIT"
 package.repository = "https://github.com/YoloDev/rstml-component"
+
+[workspace.dependencies]
+ammonia = "3.3.0"
+axum = "0.7.5"
+axum-extra = "0.9"
+bytes = "1.6.0"
+convert_case = "0.6"
+indexmap = "2"
+proc-macro2 = "1.0.81"
+proc-macro2-diagnostics = "0.10"
+quote = "1.0.36"
+rstml = { version = "0.11", default-features = false }
+syn = "2.0.60"
+tokio = "1.37.0"
