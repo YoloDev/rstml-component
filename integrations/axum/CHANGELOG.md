@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.8](https://github.com/YoloDev/rstml-component/compare/0.2.7..0.2.8) - 2024-09-13
+
+### 🔨 Chore
+
+- Use workspace deps - ([93953c4](https://github.com/YoloDev/rstml-component/commit/93953c43c0057d3f9907e92c91d86106cebd678e))
+
 ## [0.2.7](https://github.com/YoloDev/rstml-component/compare/0.2.6..0.2.7) - 2024-05-16
 
 ### ⬆️ Dependencies
