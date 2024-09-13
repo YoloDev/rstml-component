@@ -51,6 +51,7 @@ fn with_impl_param() {
 #[test]
 fn with_where_clause() {
 	#[component(WhereGenericComp)]
+	#[expect(clippy::multiple_bound_locations)]
 	fn where_generic_comp<T: Clone>(title: T) -> impl HtmlContent
 	where
 		T: Into<String>,
