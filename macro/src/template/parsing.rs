@@ -5,8 +5,9 @@ use proc_macro2::{Ident, Span};
 use proc_macro2_diagnostics::{Diagnostic, SpanDiagnosticExt};
 use rstml::{
 	node::{
-		AttributeValueExpr, FnBinding, KeyedAttribute, KeyedAttributeValue, Node, NodeAttribute,
-		NodeBlock, NodeComment, NodeDoctype, NodeElement, NodeFragment, NodeName, NodeText, RawText,
+		AttributeValueExpr, FnBinding, Infallible, KVAttributeValue, KeyedAttribute,
+		KeyedAttributeValue, Node, NodeAttribute, NodeBlock, NodeComment, NodeDoctype, NodeElement,
+		NodeFragment, NodeName, NodeText, RawText,
 	},
 	ParsingResult,
 };
@@ -84,6 +85,7 @@ impl TemplateParser {
 			Node::Fragment(fragment) => self.visit_fragment(fragment),
 			Node::Comment(comment) => self.visit_comment(comment),
 			Node::Block(block) => self.visit_block(block),
+			Node::Custom(_) => unreachable!(),
 		}
 	}
 
@@ -93,7 +95,7 @@ impl TemplateParser {
 			.push(TemplateWriteInstruction::Doctype(doctype.value));
 	}
 
-	fn visit_element(&mut self, element: NodeElement) {
+	fn visit_element(&mut self, element: NodeElement<Infallible>) {
 		fn tag_type(name: &NodeName) -> TagType {
 			match name {
 				NodeName::Block(_) => TagType::Block,
@@ -141,7 +143,7 @@ impl TemplateParser {
 		}
 	}
 
-	fn visit_component(&mut self, element: NodeElement, path: Path) {
+	fn visit_component(&mut self, element: NodeElement<Infallible>, path: Path) {
 		// TODO: improve
 		fn is_valid_identifier(value: &str) -> bool {
 			// let chars = value.as_bytes().iter().copied();
@@ -165,11 +167,14 @@ impl TemplateParser {
 			.attributes
 			.into_iter()
 			.filter_map(|attr| {
-				let NodeAttribute::Attribute(KeyedAttribute  {
+				let NodeAttribute::Attribute(KeyedAttribute {
 					key,
 					possible_value,
-				}) = attr else {
-					self.diagnostics.push(attr.span().error("Only keyed attributes are supported"));
+				}) = attr
+				else {
+					self
+						.diagnostics
+						.push(attr.span().error("Only keyed attributes are supported"));
 					return None;
 				};
 
@@ -220,7 +225,17 @@ impl TemplateParser {
 						);
 						return None;
 					}
-					KeyedAttributeValue::Value(value) => value.value,
+					KeyedAttributeValue::Value(value) => match value.value {
+						KVAttributeValue::InvalidBraced(blk) => {
+							self.diagnostics.push(
+								blk
+									.span()
+									.error("Invalid braced expression in attribute value"),
+							);
+							return None;
+						}
+						KVAttributeValue::Expr(expr) => expr,
+					},
 					KeyedAttributeValue::None => Expr::Lit(ExprLit {
 						attrs: vec![],
 						lit: Lit::Bool(LitBool {
@@ -253,7 +268,7 @@ impl TemplateParser {
 			}));
 	}
 
-	fn visit_block_element(&mut self, element: NodeElement) {
+	fn visit_block_element(&mut self, element: NodeElement<Infallible>) {
 		self.diagnostics.push(
 			element
 				.name()
@@ -262,7 +277,7 @@ impl TemplateParser {
 		);
 	}
 
-	fn visit_html_element(&mut self, element: NodeElement) {
+	fn visit_html_element(&mut self, element: NodeElement<Infallible>) {
 		let element_span = element.span();
 		let NodeElement {
 			open_tag,
@@ -380,10 +395,21 @@ impl TemplateParser {
 					AttributeValue::Constant(value),
 				));
 		} else {
+			let expr = match &value.value {
+				KVAttributeValue::InvalidBraced(blk) => {
+					self.diagnostics.push(
+						blk
+							.span()
+							.error("Invalid braced expression in attribute value"),
+					);
+					return;
+				}
+				KVAttributeValue::Expr(expr) => expr,
+			};
 			self
 				.instructions
 				.push(TemplateWriteInstruction::AttributeValue(
-					AttributeValue::Expression(value.value.clone()),
+					AttributeValue::Expression(expr.clone()),
 				));
 		}
 	}
@@ -398,7 +424,7 @@ impl TemplateParser {
 			.push(TemplateWriteInstruction::RawText(raw_text));
 	}
 
-	fn visit_fragment(&mut self, fragment: NodeFragment) {
+	fn visit_fragment(&mut self, fragment: NodeFragment<Infallible>) {
 		self.visit_nodes(fragment.children);
 	}
 

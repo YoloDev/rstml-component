@@ -26,15 +26,15 @@ package.license = "MIT"
 package.repository = "https://github.com/YoloDev/rstml-component"
 
 [workspace.dependencies]
-ammonia = "3.3.0"
-axum = "0.7.5"
+ammonia = "4"
+axum = "0.7"
 axum-extra = "0.9"
-bytes = "1.6.0"
+bytes = "1"
 convert_case = "0.6"
 indexmap = "2"
-proc-macro2 = "1.0.81"
+proc-macro2 = "1"
 proc-macro2-diagnostics = "0.10"
-quote = "1.0.36"
-rstml = { version = "0.11", default-features = false }
-syn = "2.0.60"
-tokio = "1.37.0"
+quote = "1"
+rstml = { version = "0.12", default-features = false }
+syn = "2"
+tokio = "1"
