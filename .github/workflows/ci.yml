@@ -34,7 +34,7 @@ jobs:
           git config --global core.symlinks true
           git config --global fetch.parallel 32
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
 
       - name: Run sccache-cache
