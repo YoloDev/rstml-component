@@ -27,8 +27,8 @@ package.repository = "https://github.com/YoloDev/rstml-component"
 
 [workspace.dependencies]
 ammonia = "4"
-axum = "0.7"
-axum-extra = "0.9"
+axum = "0.8"
+axum-extra = "0.12"
 bytes = "1"
 convert_case = "0.6"
 indexmap = "2"
