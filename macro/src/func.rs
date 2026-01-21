@@ -11,7 +11,7 @@ trait IdentPath {
 	fn write_to(&self, target: &mut dyn FnMut(&str));
 }
 
-impl<'a> IdentPath for &'a str {
+impl IdentPath for &str {
 	fn write_to(&self, target: &mut dyn FnMut(&str)) {
 		target(self);
 	}
@@ -34,7 +34,7 @@ where
 	}
 }
 
-impl<'a> IdentPath for &'a dyn IdentPath {
+impl IdentPath for &dyn IdentPath {
 	fn write_to(&self, target: &mut dyn FnMut(&str)) {
 		(*self).write_to(target);
 	}
