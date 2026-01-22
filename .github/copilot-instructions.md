@@ -17,7 +17,7 @@ This is a Cargo workspace with the following structure:
 ### Rust Style Guidelines
 
 - **Formatting**: Use hard tabs (not spaces) for indentation
-- **Tab width**: 2 spaces equivalent
+- **Tab width**: 2 spaces equivalent (configured in `rustfmt.toml`)
 - **Line endings**: Unix-style (LF)
 - **Charset**: UTF-8
 - **Trailing whitespace**: Must be trimmed
@@ -44,7 +44,7 @@ cargo test --workspace --all-features
 
 ### Linting
 ```bash
-cargo clippy --all -- -D warnings
+cargo clippy --workspace --all-features -- -D warnings
 ```
 
 ### Formatting
