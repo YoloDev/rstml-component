@@ -409,7 +409,7 @@ impl TemplateParser {
 			self
 				.instructions
 				.push(TemplateWriteInstruction::AttributeValue(
-					AttributeValue::Expression(expr.clone()),
+					AttributeValue::Expression(Box::new(expr.clone())),
 				));
 		}
 	}

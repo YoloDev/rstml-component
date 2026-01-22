@@ -12,7 +12,7 @@ use std::borrow::Cow;
 /// | `&`       | `&amp;`
 /// | `'`       | `&apos;`
 /// | `"`       | `&quot;`
-pub fn attribute(raw: &[u8]) -> Cow<[u8]> {
+pub fn attribute(raw: &[u8]) -> Cow<'_, [u8]> {
 	_escape(raw, |ch| matches!(ch, b'<' | b'>' | b'&' | b'\'' | b'\"'))
 }
 
@@ -29,13 +29,13 @@ pub fn attribute(raw: &[u8]) -> Cow<[u8]> {
 /// | `<`       | `&lt;`
 /// | `>`       | `&gt;`
 /// | `&`       | `&amp;`
-pub fn text(raw: &[u8]) -> Cow<[u8]> {
+pub fn text(raw: &[u8]) -> Cow<'_, [u8]> {
 	_escape(raw, |ch| matches!(ch, b'<' | b'>' | b'&'))
 }
 
 /// Escapes an `&str` and replaces a subset of xml special characters (`<`, `>`,
 /// `&`, `'`, `"`) with their corresponding xml escaped value.
-pub(crate) fn _escape<F: Fn(u8) -> bool>(bytes: &[u8], escape_chars: F) -> Cow<[u8]> {
+pub(crate) fn _escape<F: Fn(u8) -> bool>(bytes: &[u8], escape_chars: F) -> Cow<'_, [u8]> {
 	let mut escaped = None;
 	let mut iter = bytes.iter();
 	let mut pos = 0;
