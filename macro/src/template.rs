@@ -33,7 +33,7 @@ fn default_empty_elements() -> &'static HashSet<&'static str> {
 
 enum AttributeValue {
 	Constant(String),
-	Expression(Expr),
+	Expression(Box<Expr>),
 }
 
 enum Children {
