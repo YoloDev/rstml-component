@@ -44,7 +44,7 @@ cargo test --workspace --all-features
 
 ### Linting
 ```bash
-cargo clippy --workspace --all-features -- -D warnings
+cargo clippy --all -- -D warnings
 ```
 
 ### Formatting
