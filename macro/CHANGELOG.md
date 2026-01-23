@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.5](https://github.com/YoloDev/rstml-component/compare/0.2.4..0.2.5) - 2026-01-23
+
+
 ## [0.2.4](https://github.com/YoloDev/rstml-component/compare/0.2.3..0.2.4) - 2024-09-13
 
 ### 🐛 Bug Fixes
