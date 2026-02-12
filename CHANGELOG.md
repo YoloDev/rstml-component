@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7](https://github.com/YoloDev/rstml-component/compare/0.2.6..0.2.7) - 2026-02-12
+
+### 🔨 Chore
+
+- Update rust crate convert_case to 0.11 ([#136](https://github.com/YoloDev/rstml-component/issues/136)) - ([7cc8d58](https://github.com/YoloDev/rstml-component/commit/7cc8d58a997a7e5d06a7d10fd7cda89cc3129c09))
+- Update rust crate bytes to v1.11.1 ([#138](https://github.com/YoloDev/rstml-component/issues/138)) - ([5bb5752](https://github.com/YoloDev/rstml-component/commit/5bb5752fd07591c3f18d112b5ddc83eb9db92027))
+- Update rust crate syn to v2.0.115 ([#139](https://github.com/YoloDev/rstml-component/issues/139)) - ([43fc8a7](https://github.com/YoloDev/rstml-component/commit/43fc8a7f3b539492e3be36630e90882bf9d8548b))
+
+
 ## [0.2.6](https://github.com/YoloDev/rstml-component/compare/0.2.5..0.2.6) - 2026-01-23
 
 ### 🔨 Chore
