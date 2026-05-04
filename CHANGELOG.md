@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.7](https://github.com/YoloDev/rstml-component/compare/0.2.6..0.2.7) - 2026-05-04
+
+### ⬆️ Dependencies
+
+- Lock file maintenance ([#155](https://github.com/YoloDev/rstml-component/issues/155)) - ([1ad8895](https://github.com/YoloDev/rstml-component/commit/1ad88959578c57f1b62f8ce152e0d0d9e4b01629))
+- Lock file maintenance ([#157](https://github.com/YoloDev/rstml-component/issues/157)) - ([9f293b6](https://github.com/YoloDev/rstml-component/commit/9f293b6068c507b96affcaa95a262d25f19409d7))
+- Lock file maintenance ([#158](https://github.com/YoloDev/rstml-component/issues/158)) - ([281696f](https://github.com/YoloDev/rstml-component/commit/281696ffbf7b4fddf93cd142d77971f7c1458922))
+
+### 👷 CI
+
+- Pin dependencies ([#151](https://github.com/YoloDev/rstml-component/issues/151)) - ([0ad8c4d](https://github.com/YoloDev/rstml-component/commit/0ad8c4d9d09274f647f0c2812f2fa7b6b19d5c29))
+- Update mozilla-actions/sccache-action action to v0.0.10 ([#156](https://github.com/YoloDev/rstml-component/issues/156)) - ([42119fd](https://github.com/YoloDev/rstml-component/commit/42119fdafa06b26092e455aa702570e5387362b1))
+
+### 🔨 Chore
+
+- Update rust crate convert_case to 0.11 ([#136](https://github.com/YoloDev/rstml-component/issues/136)) - ([7cc8d58](https://github.com/YoloDev/rstml-component/commit/7cc8d58a997a7e5d06a7d10fd7cda89cc3129c09))
+- Update rust crate bytes to v1.11.1 ([#138](https://github.com/YoloDev/rstml-component/issues/138)) - ([5bb5752](https://github.com/YoloDev/rstml-component/commit/5bb5752fd07591c3f18d112b5ddc83eb9db92027))
+- Update rust crate syn to v2.0.115 ([#139](https://github.com/YoloDev/rstml-component/issues/139)) - ([43fc8a7](https://github.com/YoloDev/rstml-component/commit/43fc8a7f3b539492e3be36630e90882bf9d8548b))
+- Update rust crate syn to v2.0.116 ([#140](https://github.com/YoloDev/rstml-component/issues/140)) - ([9cf0dce](https://github.com/YoloDev/rstml-component/commit/9cf0dce4e128e73b8ebbb71fca63948b00153e9a))
+- Update rust crate syn to v2.0.117 ([#142](https://github.com/YoloDev/rstml-component/issues/142)) - ([e69db71](https://github.com/YoloDev/rstml-component/commit/e69db71efcd39dd57558fffca5cdda295bf50955))
+- Update rust crate tokio to v1.50.0 ([#143](https://github.com/YoloDev/rstml-component/issues/143)) - ([7718885](https://github.com/YoloDev/rstml-component/commit/77188855a91f822a630e211d18005b5a7845ee9c))
+- Update rust crate quote to v1.0.45 ([#144](https://github.com/YoloDev/rstml-component/issues/144)) - ([37f3c75](https://github.com/YoloDev/rstml-component/commit/37f3c75d1dd99fc6e7f36bdd4291c29f105ddc2c))
+- Update rust crate tokio to v1.51.0 ([#146](https://github.com/YoloDev/rstml-component/issues/146)) - ([2dad591](https://github.com/YoloDev/rstml-component/commit/2dad5915b377e51bfb14c9226be10cb5645cdc7d))
+- Update rust crate tokio to v1.51.1 ([#147](https://github.com/YoloDev/rstml-component/issues/147)) - ([3ce9a9a](https://github.com/YoloDev/rstml-component/commit/3ce9a9a1ae8ea5a9ddbbe8b973a77d6e4a1a7fd9))
+- Update axum monorepo ([#148](https://github.com/YoloDev/rstml-component/issues/148)) - ([1f0468a](https://github.com/YoloDev/rstml-component/commit/1f0468a4a6da205c8ad0ccc427c6465371011e99))
+- Update rust crate tokio to v1.52.0 ([#149](https://github.com/YoloDev/rstml-component/issues/149)) - ([ec98f2e](https://github.com/YoloDev/rstml-component/commit/ec98f2efa85c7adfdcd33cb2dece12c5e90bfc5e))
+- Update rust crate tokio to v1.52.1 ([#150](https://github.com/YoloDev/rstml-component/issues/150)) - ([6c8a19b](https://github.com/YoloDev/rstml-component/commit/6c8a19b5e76fe8a431af7fcd9942ca27197b1dcd))
+- Update rust crate tokio to v1.52.2 ([#159](https://github.com/YoloDev/rstml-component/issues/159)) - ([727606d](https://github.com/YoloDev/rstml-component/commit/727606d10c61a167de35ba8959f6a51098ce5d9a))
+
+
 ## [0.2.6](https://github.com/YoloDev/rstml-component/compare/0.2.5..0.2.6) - 2026-01-23
 
 ### 🔨 Chore
