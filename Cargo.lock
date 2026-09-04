@@ -797,7 +797,7 @@ dependencies = [
  "quote",
  "rstml",
  "rstml-component",
- "syn 2.0.119",
+ "syn 3.0.4",
 ]
 
 [[package]]

@@ -36,5 +36,5 @@ proc-macro2 = "1"
 proc-macro2-diagnostics = "0.10"
 quote = "1"
 rstml = { version = "0.12", default-features = false }
-syn = "2"
+syn = "3"
 tokio = "1"
