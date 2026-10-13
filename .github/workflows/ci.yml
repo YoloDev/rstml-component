@@ -27,6 +27,10 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Configure git
         run: |
@@ -40,12 +44,12 @@ jobs:
       - name: Configure Kache
         if: github.repository == 'YoloDev/rstml-component'
         uses: kunobi-ninja/kache-action@ad7317540dcdd71c904f7a60a87b620a0c0e67ed # v1
-        with: {}
-        #   s3-bucket: ${{ vars.SCCACHE_BUCKET }}
-        #   s3-region: auto
-        #   s3-endpoint: ${{ secrets.SCCACHE_ENDPOINT }}
-        #   s3-access-key-id: ${{ secrets.SCCACHE_ACCESS_KEY_ID }}
-        #   s3-secret-access-key: ${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}
+        with:
+          s3-bucket: ${{ vars.KACHE_BUCKET }}
+          s3-region: auto
+          s3-endpoint: ${{ secrets.SCCACHE_ENDPOINT }}
+          s3-access-key-id: ${{ secrets.SCCACHE_ACCESS_KEY_ID }}
+          s3-secret-access-key: ${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}
 
       - name: Lint
         run: cargo clippy --all -- -D warnings
