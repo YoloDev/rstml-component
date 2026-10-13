@@ -27,6 +27,10 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
 
+    permissions:
+      contents: read
+      pull-requests: write
+
     steps:
       - name: Configure git
         run: |
@@ -37,31 +41,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: dtolnay/rust-toolchain@6bed0761d98439e5a578e2877258200ad565ba87 # stable
 
-      - name: Run sccache-cache
+      - name: Configure Kache
         if: github.repository == 'YoloDev/rstml-component'
-        uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
-
-      - name: Configure sccache
-        if: github.repository == 'YoloDev/rstml-component'
-        shell: bash
-        run: |
-          if [[ -z "${{ secrets.SCCACHE_ENDPOINT }}" ]]; then
-            echo "SCCACHE_ENDPOINT is not set"
-          else
-            echo "RUSTC_WRAPPER=sccache" >> $GITHUB_ENV
-            echo "CARGO_INCREMENTAL=0" >> $GITHUB_ENV
-            echo "SCCACHE_BUCKET=$SCCACHE_BUCKET" >> $GITHUB_ENV
-            echo "SCCACHE_REGION=$SCCACHE_REGION" >> $GITHUB_ENV
-            echo "SCCACHE_ENDPOINT=$SCCACHE_ENDPOINT" >> $GITHUB_ENV
-            echo "AWS_ACCESS_KEY_ID=$SCCACHE_ACCESS_KEY_ID" >> $GITHUB_ENV
-            echo "AWS_SECRET_ACCESS_KEY=$SCCACHE_SECRET_ACCESS_KEY" >> $GITHUB_ENV
-          fi
-        env:
-          SCCACHE_BUCKET: ${{ vars.SCCACHE_BUCKET }}
-          SCCACHE_REGION: ${{ vars.SCCACHE_REGION }}
-          SCCACHE_ENDPOINT: ${{ secrets.SCCACHE_ENDPOINT }}
-          SCCACHE_ACCESS_KEY_ID: ${{ secrets.SCCACHE_ACCESS_KEY_ID }}
-          SCCACHE_SECRET_ACCESS_KEY: ${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}
+        uses: kunobi-ninja/kache-action@ad7317540dcdd71c904f7a60a87b620a0c0e67ed # v1
+        with:
+          s3-bucket: ${{ vars.KACHE_BUCKET }}
+          s3-region: auto
+          s3-endpoint: ${{ secrets.SCCACHE_ENDPOINT }}
+          s3-access-key-id: ${{ secrets.SCCACHE_ACCESS_KEY_ID }}
+          s3-secret-access-key: ${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}
 
       - name: Lint
         run: cargo clippy --all -- -D warnings
