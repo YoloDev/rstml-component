@@ -50,6 +50,7 @@ jobs:
           s3-endpoint: ${{ secrets.SCCACHE_ENDPOINT }}
           s3-access-key-id: ${{ secrets.SCCACHE_ACCESS_KEY_ID }}
           s3-secret-access-key: ${{ secrets.SCCACHE_SECRET_ACCESS_KEY }}
+          s3-prefix: ${{ github.repository }}
 
       - name: Lint
         run: cargo clippy --all -- -D warnings
