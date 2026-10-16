@@ -30,7 +30,7 @@ jobs:
           token: ${{ steps.generate-token.outputs.token }}
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@686976e191b89faba57d3206551f0f330d8cb249 # stable
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
 
       - name: Run release-plz
         uses: MarcoIeni/release-plz-action@8921286633dfa0c4020f7f30bd1c14fe19cbb10e # v0.5.142
